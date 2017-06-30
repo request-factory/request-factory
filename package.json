@@ -1,0 +1,30 @@
+{
+  "name": "supernova-mobile",
+  "version": "0.0.0",
+  "description": "Hello Expo!",
+  "author": "jessecordeiro <jesse.cordeiro@live.ca>",
+  "main": "main.js",
+  "scripts": {
+    "test": "node node_modules/jest/bin/jest.js",
+    "postinstall": "rndebugger-open"
+  },
+  "jest": {
+    "preset": "jest-expo"
+  },
+  "dependencies": {
+    "@expo/ex-navigation": "~3.0.0",
+    "@expo/samples": "~1.0.3",
+    "axios": "^0.16.2",
+    "expo": "17.0.0",
+    "native-base": "^2.1.4",
+    "react": "16.0.0-alpha.6",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-17.0.0.tar.gz"
+  },
+  "devDependencies": {
+    "eslint-config-equimper": "^2.1.2",
+    "jest-expo": "~1.0.1",
+    "react-native-debugger-open": "^0.3.11"
+  },
+  "repository": {},
+  "license": "MIT"
+}
