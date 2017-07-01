@@ -133,7 +133,7 @@ export default class HomeScreen extends React.Component {
       method: this.state.type,
       url: this.state.url,
     }).then((response) => {
-      this.setState({ res: response });
+      this.setState({ res: response.toString() });
       console.log(this.state.res);
     });
     // Linking.openURL(
