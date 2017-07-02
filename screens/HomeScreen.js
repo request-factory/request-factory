@@ -65,6 +65,18 @@ export default class HomeScreen extends React.Component {
             <Picker.Item label="GET" value="get" />
             <Picker.Item label="PUT" value="put" />
             <Picker.Item label="POST" value="post" />
+            <Picker.Item label="PATCH" value="patch" />
+            <Picker.Item label="DELETE" value="delete" />
+            <Picker.Item label="COPY" value="copy" />
+            <Picker.Item label="HEAD" value="head" />
+            <Picker.Item label="OPTIONS" value="options" />
+            <Picker.Item label="LINK" value="link" />
+            <Picker.Item label="UNLINK" value="unlink" />
+            <Picker.Item label="PURGE" value="purge" />
+            <Picker.Item label="LOCK" value="lock" />
+            <Picker.Item label="UNLOCK" value="unlock" />
+            <Picker.Item label="PROPFIND" value="propfind" />
+            <Picker.Item label="VIEW" value="view" />
           </Picker>
           <Item rounded style={{ flex: 0.4, height: 50 }}>
             <Input
