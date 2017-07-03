@@ -89,9 +89,9 @@ export default class HomeScreen extends React.Component {
             <Text style={{ textAlign: 'center', paddingLeft: 5 }}>Send</Text>
           </Button>
         </View>
-        <View style={styles.responseContainer}>
+        <ScrollView style={styles.responseContainer}>
           <Text>{this.state.res}</Text>
-        </View>
+        </ScrollView>
       </View>
     );
   }
@@ -133,7 +133,7 @@ export default class HomeScreen extends React.Component {
       method: this.state.type,
       url: this.state.url,
     }).then((response) => {
-      this.setState({ res: response.toString() });
+      this.setState({ res: JSON.stringify(response.data, null, "\t") });
       console.log(this.state.res);
     });
     // Linking.openURL(
@@ -144,14 +144,19 @@ export default class HomeScreen extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 0.5,
+    flex: 0.2,
     backgroundColor: '#fff',
     flexDirection: 'row',
     marginTop: 5,
     marginHorizontal: 5,
   },
   responseContainer: {
-
+    borderRadius: 4,
+    borderWidth: 0.5,
+    borderColor: '#d6d7da',
+    marginRight: 20,
+    marginLeft: 20,
+    padding: 10
   },
   developmentModeText: {
     marginBottom: 20,
