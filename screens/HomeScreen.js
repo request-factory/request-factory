@@ -21,12 +21,12 @@ import {
   Picker,
   Content,
   Button,
+  Toast,
 } from 'native-base';
 
 import { MonoText } from '../components/StyledText';
 
 export default class HomeScreen extends React.Component {
-
   static route = {
     navigationBar: {
       title: 'Home',
@@ -84,8 +84,10 @@ export default class HomeScreen extends React.Component {
               onChangeText={(text) => this.updateUrl(text)}
             />
           </Item>
-          <Button style={{ flex: 0.1 }} rounded info
-            onPress={this._handleHelpPress}>
+          <Button
+style={{ flex: 0.1 }} rounded info
+            onPress={this._handleHelpPress}
+          >
             <Text style={{ textAlign: 'center', paddingLeft: 5 }}>Send</Text>
           </Button>
         </View>
@@ -125,20 +127,20 @@ export default class HomeScreen extends React.Component {
   };
 
   _handleHelpPress = async () => {
-    // console.log(this.state);
-    // Linking.openURL(
-    //   'https://docs.expo.io/versions/latest/guides/development-mode'
-    // );
     await axios({
       method: this.state.type,
       url: this.state.url,
     }).then((response) => {
-      this.setState({ res: JSON.stringify(response.data, null, "\t") });
+      this.setState({ res: JSON.stringify(response.data, null, '\t') });
       console.log(this.state.res);
+    }).catch((error) => {
+      Toast.show({
+        text: `${error}`,
+        position: 'bottom',
+        buttonText: 'Dismiss',
+        duration: 3000,
+      });
     });
-    // Linking.openURL(
-    //   'https://docs.expo.io/versions/latest/guides/up-and-running.html#can-t-see-your-changes'
-    // );
   };
 }
 
@@ -156,7 +158,7 @@ const styles = StyleSheet.create({
     borderColor: '#d6d7da',
     marginRight: 20,
     marginLeft: 20,
-    padding: 10
+    padding: 10,
   },
   developmentModeText: {
     marginBottom: 20,
