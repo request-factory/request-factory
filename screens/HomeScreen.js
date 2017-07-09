@@ -24,6 +24,8 @@ import {
   Toast,
 } from 'native-base';
 
+import { Col, Row, Grid } from 'react-native-easy-grid';
+
 import { MonoText } from '../components/StyledText';
 
 export default class HomeScreen extends React.Component {
@@ -85,15 +87,24 @@ export default class HomeScreen extends React.Component {
             />
           </Item>
           <Button
-style={{ flex: 0.1 }} rounded info
+            style={{ flex: 0.1 }} rounded info
             onPress={this._handleHelpPress}
           >
             <Text style={{ textAlign: 'center', paddingLeft: 5 }}>Send</Text>
           </Button>
         </View>
-        <ScrollView style={styles.responseContainer}>
-          <Text>{this.state.res}</Text>
-        </ScrollView>
+        <Grid style={{ flex: 1.6, marginRight: 20, marginLeft: 20 }}>
+          <Row style={{ flex: 0.1, padding: 0, margin: 0, borderRadius: 4, borderWidth: 0.5, borderColor: '#d6d7da', backgroundColor: '#f7f7f7' }}>
+            <Col size={50}><TouchableOpacity><Text style={{ marginTop: 10, textAlign: 'left', marginLeft: 10 }}>Body</Text></TouchableOpacity></Col>
+            <Col size={20}><Text style={{ marginTop: 10, textAlign: 'center' }}>Status: {this.state.status}</Text></Col>
+            <Col size={25}><Text style={{ marginTop: 10, textAlign: 'center' }}>Time: {this.state.time}</Text></Col>
+          </Row>
+          <Row style={{ flex: 1.0 }}>
+            <ScrollView style={styles.responseContainer}>
+              <Text>{this.state.res}</Text>
+            </ScrollView>
+          </Row>
+        </Grid>
       </View>
     );
   }
@@ -126,14 +137,24 @@ style={{ flex: 0.1 }} rounded info
     );
   };
 
+  _handleResponseTime = (requestTime) => {
+    const responseTime = (new Date()).getTime() - requestTime;
+    this.setState({ time: `${responseTime} ms` });
+  }
+
   _handleHelpPress = async () => {
+    const requestTime = (new Date()).getTime();
     await axios({
       method: this.state.type,
       url: this.state.url,
     }).then((response) => {
+      this._handleResponseTime(requestTime);
       this.setState({ res: JSON.stringify(response.data, null, '\t') });
-      console.log(this.state.res);
+      this.setState({ status: response.status });
     }).catch((error) => {
+      this._handleResponseTime(requestTime);
+      this.setState({ res: '' });
+      this.setState({ status: error.response.status });
       Toast.show({
         text: `${error}`,
         position: 'bottom',
@@ -156,9 +177,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     borderWidth: 0.5,
     borderColor: '#d6d7da',
-    marginRight: 20,
-    marginLeft: 20,
-    padding: 10,
   },
   developmentModeText: {
     marginBottom: 20,
