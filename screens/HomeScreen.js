@@ -148,13 +148,15 @@ export default class HomeScreen extends React.Component {
       method: this.state.type,
       url: this.state.url,
     }).then((response) => {
+      const responseStatus = response ? response.status : '';
       this._handleResponseTime(requestTime);
       this.setState({ res: JSON.stringify(response.data, null, '\t') });
-      this.setState({ status: response.status });
+      this.setState({ status: responseStatus });
     }).catch((error) => {
       this._handleResponseTime(requestTime);
+      const responseStatus = error.response ? error.response.status : '';
       this.setState({ res: '' });
-      this.setState({ status: error.response.status });
+      this.setState({ status: responseStatus });
       Toast.show({
         text: `${error}`,
         position: 'bottom',
