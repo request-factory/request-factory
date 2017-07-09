@@ -26,6 +26,10 @@ import {
 
 import { Col, Row, Grid } from 'react-native-easy-grid';
 
+import validator from 'validator';
+
+import normalize from 'normalize-url';
+
 import { MonoText } from '../components/StyledText';
 
 import styles from '../styles/homeScreen/style';
@@ -45,11 +49,16 @@ export default class HomeScreen extends React.Component {
     type: 'get',
     url: null,
     res: 'test',
+    valid: false,
   };
 
   updateUrl(input) {
-    this.setState({ url: input });
-    console.log(`Update url: ${this.state.url}`);
+    const urlIsValid = validator.isURL(input);
+    this.setState({ valid: urlIsValid });
+
+    // Only normalize url if input is valid
+    const normalizedUrl = urlIsValid ? normalize(input) : input;
+    this.setState({ url: normalizedUrl });
   }
 
   updatePick(value) {
@@ -145,26 +154,36 @@ export default class HomeScreen extends React.Component {
   }
 
   _handleHelpPress = async () => {
+    console.log(`Update url: ${this.state.url}`);
     const requestTime = (new Date()).getTime();
-    await axios({
-      method: this.state.type,
-      url: this.state.url,
-    }).then((response) => {
-      const responseStatus = response ? response.status : '';
-      this._handleResponseTime(requestTime);
-      this.setState({ res: JSON.stringify(response.data, null, '\t') });
-      this.setState({ status: responseStatus });
-    }).catch((error) => {
-      this._handleResponseTime(requestTime);
-      const responseStatus = error.response ? error.response.status : '';
-      this.setState({ res: '' });
-      this.setState({ status: responseStatus });
+    if (this.state.valid) {
+      await axios({
+        method: this.state.type,
+        url: this.state.url,
+      }).then((response) => {
+        const responseStatus = response ? response.status : '';
+        this._handleResponseTime(requestTime);
+        this.setState({ res: JSON.stringify(response.data, null, '\t') });
+        this.setState({ status: responseStatus });
+      }).catch((error) => {
+        this._handleResponseTime(requestTime);
+        const responseStatus = error.response ? error.response.status : '';
+        this.setState({ res: '' });
+        this.setState({ status: responseStatus });
+        Toast.show({
+          text: `${error}`,
+          position: 'bottom',
+          buttonText: 'Dismiss',
+          duration: 3000,
+        });
+      });
+    } else{
       Toast.show({
-        text: `${error}`,
+        text: `Error: Invalid URL`,
         position: 'bottom',
         buttonText: 'Dismiss',
         duration: 3000,
       });
-    });
+    }
   };
 }
