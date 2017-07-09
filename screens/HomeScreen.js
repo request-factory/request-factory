@@ -26,6 +26,8 @@ import {
 
 import { MonoText } from '../components/StyledText';
 
+import validator from 'validator';
+
 export default class HomeScreen extends React.Component {
   static route = {
     navigationBar: {
@@ -41,9 +43,11 @@ export default class HomeScreen extends React.Component {
     type: 'get',
     url: null,
     res: 'test',
+    valid: false,
   };
 
   updateUrl(input) {
+    this.setState({ valid: validator.isURL(input)})
     this.setState({ url: input });
     console.log(`Update url: ${this.state.url}`);
   }
@@ -127,20 +131,29 @@ style={{ flex: 0.1 }} rounded info
   };
 
   _handleHelpPress = async () => {
-    await axios({
-      method: this.state.type,
-      url: this.state.url,
-    }).then((response) => {
-      this.setState({ res: JSON.stringify(response.data, null, '\t') });
-      console.log(this.state.res);
-    }).catch((error) => {
+    if (this.state.valid){
+      await axios({
+        method: this.state.type,
+        url: this.state.url,
+      }).then((response) => {
+        this.setState({ res: JSON.stringify(response.data, null, '\t') });
+        console.log(this.state.res);
+      }).catch((error) => {
+        Toast.show({
+          text: `${error}`,
+          position: 'bottom',
+          buttonText: 'Dismiss',
+          duration: 3000,
+        });
+      });
+    } else{
       Toast.show({
-        text: `${error}`,
+        text: `Error: Invalid URL`,
         position: 'bottom',
         buttonText: 'Dismiss',
         duration: 3000,
       });
-    });
+    }
   };
 }
 

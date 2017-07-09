@@ -18,7 +18,8 @@
     "expo": "17.0.0",
     "native-base": "^2.1.4",
     "react": "16.0.0-alpha.6",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-17.0.0.tar.gz"
+    "react-native": "https://github.com/expo/react-native/archive/sdk-17.0.0.tar.gz",
+    "validator": "^8.0.0"
   },
   "devDependencies": {
     "eslint-config-equimper": "^2.1.2",
