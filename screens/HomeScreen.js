@@ -24,9 +24,13 @@ import {
   Toast,
 } from 'native-base';
 
+import { Col, Row, Grid } from 'react-native-easy-grid';
+
 import { MonoText } from '../components/StyledText';
 
 import validator from 'validator';
+
+import styles from '../styles/homeScreen/style';
 
 export default class HomeScreen extends React.Component {
   static route = {
@@ -89,15 +93,24 @@ export default class HomeScreen extends React.Component {
             />
           </Item>
           <Button
-style={{ flex: 0.1 }} rounded info
+            style={{ flex: 0.1 }} rounded info
             onPress={this._handleHelpPress}
           >
             <Text style={{ textAlign: 'center', paddingLeft: 5 }}>Send</Text>
           </Button>
         </View>
-        <ScrollView style={styles.responseContainer}>
-          <Text>{this.state.res}</Text>
-        </ScrollView>
+        <Grid style={styles.responseGrid}>
+          <Row style={styles.responseTab}>
+            <Col size={50}><TouchableOpacity><Text style={styles.viewTab}>Body</Text></TouchableOpacity></Col>
+            <Col size={20}><Text style={styles.responseStat}>Status: {this.state.status}</Text></Col>
+            <Col size={25}><Text style={styles.responseStat}>Time: {this.state.time}</Text></Col>
+          </Row>
+          <Row style={{ flex: 1.0 }}>
+            <ScrollView style={styles.responseContainer}>
+              <Text>{this.state.res}</Text>
+            </ScrollView>
+          </Row>
+        </Grid>
       </View>
     );
   }
@@ -130,15 +143,27 @@ style={{ flex: 0.1 }} rounded info
     );
   };
 
+  _handleResponseTime = (requestTime) => {
+    const responseTime = (new Date()).getTime() - requestTime;
+    this.setState({ time: `${responseTime} ms` });
+  }
+
   _handleHelpPress = async () => {
+    const requestTime = (new Date()).getTime();
     if (this.state.valid){
       await axios({
         method: this.state.type,
         url: this.state.url,
       }).then((response) => {
+        const responseStatus = response ? response.status : '';
+        this._handleResponseTime(requestTime);
         this.setState({ res: JSON.stringify(response.data, null, '\t') });
-        console.log(this.state.res);
+        this.setState({ status: responseStatus });
       }).catch((error) => {
+        this._handleResponseTime(requestTime);
+        const responseStatus = error.response ? error.response.status : '';
+        this.setState({ res: '' });
+        this.setState({ status: responseStatus });
         Toast.show({
           text: `${error}`,
           position: 'bottom',
@@ -156,104 +181,3 @@ style={{ flex: 0.1 }} rounded info
     }
   };
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 0.2,
-    backgroundColor: '#fff',
-    flexDirection: 'row',
-    marginTop: 5,
-    marginHorizontal: 5,
-  },
-  responseContainer: {
-    borderRadius: 4,
-    borderWidth: 0.5,
-    borderColor: '#d6d7da',
-    marginRight: 20,
-    marginLeft: 20,
-    padding: 10,
-  },
-  developmentModeText: {
-    marginBottom: 20,
-    color: 'rgba(0,0,0,0.4)',
-    fontSize: 15,
-    textAlign: 'center',
-  },
-  contentContainer: {
-    paddingTop: 80,
-  },
-  welcomeContainer: {
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
-  },
-  welcomeImage: {
-    width: 140,
-    height: 38,
-    resizeMode: 'contain',
-    marginTop: 3,
-    marginLeft: -10,
-  },
-  getStartedContainer: {
-    alignItems: 'center',
-    marginRight: 20,
-    marginTop: 10,
-    marginLeft: 100,
-  },
-  homeScreenFilename: {
-    marginVertical: 7,
-  },
-  codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)',
-  },
-  codeHighlightContainer: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    borderRadius: 3,
-    paddingHorizontal: 4,
-  },
-  getStartedText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    lineHeight: 23,
-    textAlign: 'center',
-  },
-  tabBarInfoContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    ...Platform.select({
-      ios: {
-        shadowColor: 'black',
-        shadowOffset: { height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 20,
-      },
-    }),
-    alignItems: 'center',
-    backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
-  },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
-  },
-  navigationFilename: {
-    marginTop: 5,
-  },
-  helpContainer: {
-    marginTop: 15,
-    alignItems: 'center',
-  },
-  helpLink: {
-    paddingVertical: 15,
-  },
-  helpLinkText: {
-    fontSize: 14,
-    color: '#2e78b7',
-  },
-});
