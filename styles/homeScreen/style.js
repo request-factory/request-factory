@@ -12,9 +12,29 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     borderWidth: 0.5,
     borderColor: '#d6d7da',
+  },
+  responseGrid: {
+    flex: 1.6,
     marginRight: 20,
     marginLeft: 20,
-    padding: 10,
+  },
+  responseTab: {
+    flex: 0.1,
+    padding: 0,
+    margin: 0,
+    borderRadius: 4,
+    borderWidth: 0.5,
+    borderColor: '#d6d7da',
+    backgroundColor: '#f7f7f7',
+  },
+  viewTab: {
+    marginTop: 10,
+    marginLeft: 10,
+    textAlign: 'left',
+  },
+  responseStat: {
+    marginTop: 10,
+    textAlign: 'center',
   },
   developmentModeText: {
     marginBottom: 20,
