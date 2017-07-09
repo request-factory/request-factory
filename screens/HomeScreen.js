@@ -26,9 +26,11 @@ import {
 
 import { Col, Row, Grid } from 'react-native-easy-grid';
 
-import { MonoText } from '../components/StyledText';
-
 import validator from 'validator';
+
+import normalize from 'normalize-url';
+
+import { MonoText } from '../components/StyledText';
 
 import styles from '../styles/homeScreen/style';
 
@@ -51,9 +53,12 @@ export default class HomeScreen extends React.Component {
   };
 
   updateUrl(input) {
-    this.setState({ valid: validator.isURL(input)})
-    this.setState({ url: input });
-    console.log(`Update url: ${this.state.url}`);
+    const urlIsValid = validator.isURL(input);
+    this.setState({ valid: urlIsValid });
+
+    // Only normalize url if input is valid
+    const normalizedUrl = urlIsValid ? normalize(input) : input;
+    this.setState({ url: normalizedUrl });
   }
 
   updatePick(value) {
@@ -149,8 +154,9 @@ export default class HomeScreen extends React.Component {
   }
 
   _handleHelpPress = async () => {
+    console.log(`Update url: ${this.state.url}`);
     const requestTime = (new Date()).getTime();
-    if (this.state.valid){
+    if (this.state.valid) {
       await axios({
         method: this.state.type,
         url: this.state.url,
