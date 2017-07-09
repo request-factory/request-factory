@@ -24,6 +24,8 @@ import {
   Toast,
 } from 'native-base';
 
+import { Col, Row, Grid } from 'react-native-easy-grid';
+
 import { MonoText } from '../components/StyledText';
 
 import styles from '../styles/homeScreen/style';
@@ -93,9 +95,18 @@ export default class HomeScreen extends React.Component {
             <Text style={{ textAlign: 'center', paddingLeft: 5 }}>Send</Text>
           </Button>
         </View>
-        <ScrollView style={styles.responseContainer}>
-          <Text>{this.state.res}</Text>
-        </ScrollView>
+        <Grid style={styles.responseGrid}>
+          <Row style={styles.responseTab}>
+            <Col size={50}><TouchableOpacity><Text style={styles.viewTab}>Body</Text></TouchableOpacity></Col>
+            <Col size={20}><Text style={styles.responseStat}>Status: {this.state.status}</Text></Col>
+            <Col size={25}><Text style={styles.responseStat}>Time: {this.state.time}</Text></Col>
+          </Row>
+          <Row style={{ flex: 1.0 }}>
+            <ScrollView style={styles.responseContainer}>
+              <Text>{this.state.res}</Text>
+            </ScrollView>
+          </Row>
+        </Grid>
       </View>
     );
   }
@@ -128,14 +139,26 @@ export default class HomeScreen extends React.Component {
     );
   };
 
+  _handleResponseTime = (requestTime) => {
+    const responseTime = (new Date()).getTime() - requestTime;
+    this.setState({ time: `${responseTime} ms` });
+  }
+
   _handleHelpPress = async () => {
+    const requestTime = (new Date()).getTime();
     await axios({
       method: this.state.type,
       url: this.state.url,
     }).then((response) => {
+      const responseStatus = response ? response.status : '';
+      this._handleResponseTime(requestTime);
       this.setState({ res: JSON.stringify(response.data, null, '\t') });
-      console.log(this.state.res);
+      this.setState({ status: responseStatus });
     }).catch((error) => {
+      this._handleResponseTime(requestTime);
+      const responseStatus = error.response ? error.response.status : '';
+      this.setState({ res: '' });
+      this.setState({ status: responseStatus });
       Toast.show({
         text: `${error}`,
         position: 'bottom',
