@@ -22,6 +22,10 @@ import {
   Content,
   Button,
   Toast,
+  List,
+  ListItem,
+  Left,
+  Right,
 } from 'native-base';
 
 import { Col, Row, Grid } from 'react-native-easy-grid';
@@ -50,6 +54,8 @@ export default class HomeScreen extends React.Component {
     url: null,
     res: 'test',
     valid: false,
+    showResponseBody: true,
+    responseHeaders: {},
   };
 
   updateUrl(input) {
@@ -64,6 +70,24 @@ export default class HomeScreen extends React.Component {
   updatePick(value) {
     this.setState({ type: value });
     console.log(`Update request type: ${this.state.type}`);
+  }
+
+  _renderResponseBody() {
+    return this.state.showResponseBody ? <Text>{this.state.res}</Text> : null;
+  }
+
+  _renderResponseHeaders() {
+    if (!this.state.showResponseBody) {
+      return (<List>
+        {Object.keys(this.state.responseHeaders).map((headerKey) => (
+          <ListItem key={headerKey}>
+            <Left><Text>{headerKey}</Text></Left>
+            <Right><Text>{this.state.responseHeaders[headerKey]}</Text></Right>
+          </ListItem>
+        ))}
+      </List>);
+    }
+    return null;
   }
 
   render() {
@@ -106,13 +130,24 @@ export default class HomeScreen extends React.Component {
         </View>
         <Grid style={styles.responseGrid}>
           <Row style={styles.responseTab}>
-            <Col size={50}><TouchableOpacity><Text style={styles.viewTab}>Body</Text></TouchableOpacity></Col>
+            <Col size={20} style={styles.viewCol}>
+              <TouchableOpacity onPress={() => this._handleSwitchResponseView('body')}>
+                <Text style={this._handleSelectedStyle('body')}>Body</Text>
+              </TouchableOpacity>
+            </Col>
+            <Col size={20} style={styles.viewCol}>
+              <TouchableOpacity onPress={() => this._handleSwitchResponseView('headers')}>
+                <Text style={this._handleSelectedStyle('headers')}>Headers</Text>
+              </TouchableOpacity>
+            </Col>
+            <Col size={15}><TouchableOpacity /></Col>
             <Col size={20}><Text style={styles.responseStat}>Status: {this.state.status}</Text></Col>
             <Col size={25}><Text style={styles.responseStat}>Time: {this.state.time}</Text></Col>
           </Row>
           <Row style={{ flex: 1.0 }}>
             <ScrollView style={styles.responseContainer}>
-              <Text>{this.state.res}</Text>
+              {this._renderResponseBody()}
+              {this._renderResponseHeaders()}
             </ScrollView>
           </Row>
         </Grid>
@@ -142,6 +177,23 @@ export default class HomeScreen extends React.Component {
     );
   }
 
+  _handleSelectedStyle = (name) => {
+    if (this.state.showResponseBody && name === 'body') {
+      return styles.viewTabSelected;
+    } else if (!this.state.showResponseBody && name === 'headers') {
+      return styles.viewTabSelected;
+    }
+    return styles.viewTab;
+  }
+
+  _handleSwitchResponseView = (name) => {
+    if (name === 'body') {
+      this.setState({ showResponseBody: true });
+    } else {
+      this.setState({ showResponseBody: false });
+    }
+  }
+
   _handleLearnMorePress = () => {
     Linking.openURL(
       'https://docs.expo.io/versions/latest/guides/development-mode'
@@ -165,10 +217,12 @@ export default class HomeScreen extends React.Component {
         this._handleResponseTime(requestTime);
         this.setState({ res: JSON.stringify(response.data, null, '\t') });
         this.setState({ status: responseStatus });
+        this.setState({ responseHeaders: response.headers });
       }).catch((error) => {
         this._handleResponseTime(requestTime);
         const responseStatus = error.response ? error.response.status : '';
         this.setState({ res: '' });
+        this.setState({ responseHeaders: {} });
         this.setState({ status: responseStatus });
         Toast.show({
           text: `${error}`,
@@ -177,9 +231,9 @@ export default class HomeScreen extends React.Component {
           duration: 3000,
         });
       });
-    } else{
+    } else {
       Toast.show({
-        text: `Error: Invalid URL`,
+        text: 'Error: Invalid URL',
         position: 'bottom',
         buttonText: 'Dismiss',
         duration: 3000,

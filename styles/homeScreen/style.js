@@ -1,5 +1,7 @@
 import { Platform, StyleSheet } from 'react-native';
 
+import Colors from '../../constants/Colors';
+
 const styles = StyleSheet.create({
   container: {
     flex: 0.2,
@@ -29,8 +31,20 @@ const styles = StyleSheet.create({
   },
   viewTab: {
     marginTop: 10,
-    marginLeft: 10,
-    textAlign: 'left',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  viewTabSelected: {
+    marginTop: 10,
+    marginBottom: 10,
+    textAlign: 'center',
+    color: Colors.tabIconSelected,
+  },
+  viewCol: {
+    borderRadius: 2,
+    borderWidth: 0.5,
+    borderColor: '#d6d7da',
+    backgroundColor: '#f7f7f7',
   },
   responseStat: {
     marginTop: 10,
