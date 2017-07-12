@@ -12,6 +12,7 @@ import {
   View,
   TextInput,
   Text,
+  Keyboard,
 } from 'react-native';
 
 import {
@@ -206,6 +207,7 @@ export default class HomeScreen extends React.Component {
   }
 
   _handleHelpPress = async () => {
+    Keyboard.dismiss();
     console.log(`Update url: ${this.state.url}`);
     const requestTime = (new Date()).getTime();
     if (this.state.valid) {
