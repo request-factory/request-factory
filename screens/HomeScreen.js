@@ -37,6 +37,8 @@ import normalize from 'normalize-url';
 
 import { MonoText } from '../components/StyledText';
 
+import { ExpandableText } from '../components/ExpandableText';
+
 import styles from '../styles/homeScreen/style';
 
 export default class HomeScreen extends React.Component {
@@ -82,8 +84,8 @@ export default class HomeScreen extends React.Component {
       return (<List>
         {Object.keys(this.state.responseHeaders).map((headerKey) => (
           <ListItem key={headerKey}>
-            <Left><Text>{headerKey}</Text></Left>
-            <Right><Text>{this.state.responseHeaders[headerKey]}</Text></Right>
+            <Left><ExpandableText text={headerKey} /></Left>
+            <Right><ExpandableText text={this.state.responseHeaders[headerKey]} /></Right>
           </ListItem>
         ))}
       </List>);
