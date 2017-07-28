@@ -1,11 +1,10 @@
 import Expo from 'expo';
 import React from 'react';
-import { Platform, StatusBar, StyleSheet, View } from 'react-native';
-import { NavigationProvider, StackNavigation } from '@expo/ex-navigation';
+import { StyleSheet, View } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { Root } from 'native-base';
 
-import Router from './navigation/Router';
+import Navigator from './navigation/RootNavigation';
 import cacheAssetsAsync from './utilities/cacheAssetsAsync';
 
 class AppContainer extends React.Component {
@@ -45,16 +44,7 @@ class AppContainer extends React.Component {
       return (
         <Root>
           <View style={styles.container}>
-            <NavigationProvider router={Router}>
-              <StackNavigation
-                id="root"
-                initialRoute={Router.getRoute('rootNavigation')}
-              />
-            </NavigationProvider>
-
-            {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-            {Platform.OS === 'android' &&
-              <View style={styles.statusBarUnderlay} />}
+            <Navigator />
           </View>
         </Root>
       );

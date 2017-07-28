@@ -1,13 +1,34 @@
-import { createRouter } from '@expo/ex-navigation';
+import { TabNavigator } from 'react-navigation';
 
 import HomeScreen from '../screens/HomeScreen';
-import LinksScreen from '../screens/LinksScreen';
+import HistoryScreen from '../screens/HistoryScreen';
 import SettingsScreen from '../screens/SettingsScreen';
-import RootNavigation from './RootNavigation';
+import Colors from '../constants/Colors';
 
-export default createRouter(() => ({
-  home: () => HomeScreen,
-  links: () => LinksScreen,
-  settings: () => SettingsScreen,
-  rootNavigation: () => RootNavigation,
-}));
+export default TabNavigator({
+  Home: {
+    screen: HomeScreen,
+  },
+  History: {
+    screen: HistoryScreen,
+  },
+  Settings: {
+    screen: SettingsScreen,
+  },
+}, {
+  animationEnabled: true,
+  tabBarPosition: 'bottom',
+  tabBarOptions: {
+    showLabel: false,
+    showIcon: true,
+    inactiveTintColor: Colors.greyColour,
+    activeTintColor: Colors.mainTheme,
+    pressColor: Colors.mainTheme,
+    style: {
+      backgroundColor: Colors.whiteColour,
+    },
+    indicatorStyle: {
+      backgroundColor: Colors.mainTheme,
+    },
+  },
+});

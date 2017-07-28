@@ -17,8 +17,7 @@ const styles = StyleSheet.create({
   },
   responseGrid: {
     flex: 1.6,
-    marginRight: 20,
-    marginLeft: 20,
+    marginHorizontal: 5,
   },
   responseTab: {
     flex: 0.1,
@@ -38,7 +37,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
     textAlign: 'center',
-    color: Colors.tabIconSelected,
+    color: Colors.mainTheme,
   },
   viewCol: {
     borderRadius: 2,
