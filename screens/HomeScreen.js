@@ -81,8 +81,10 @@ export default class HomeScreen extends React.Component {
   // Update state of request screen when user attempts to copy request from history screen
   componentWillReceiveProps(nextProps) {
     const { navigation: { state: { params } } } = nextProps;
-    this.setState({ url: params.requestUrl });
-    this.setState({ type: params.requestType });
+    if (params !== undefined) {
+      this.setState({ url: params.requestUrl });
+      this.setState({ type: params.requestType });
+    }
   }
 
   updateUrl(input) {
@@ -235,18 +237,19 @@ export default class HomeScreen extends React.Component {
 
   _handleHelpPress = async () => {
     Keyboard.dismiss();
-    console.log(`Update url: ${this.state.url}`);
     const requestTime = (new Date()).getTime();
+    const requestObj = {
+      method: this.state.type,
+      url: this.state.url,
+    };
     if (this.state.valid) {
-      await axios({
-        method: this.state.type,
-        url: this.state.url,
-      }).then((response) => {
+      await axios(requestObj).then((response) => {
         const responseStatus = response ? response.status : '';
         this._handleResponseTime(requestTime);
         this.setState({ res: JSON.stringify(response.data, null, '\t') });
         this.setState({ status: responseStatus });
         this.setState({ responseHeaders: response.headers });
+        this.props.screenProps.updateHistory({ ...requestObj, _id: requestTime });
       }).catch((error) => {
         this._handleResponseTime(requestTime);
         const responseStatus = error.response ? error.response.status : '';

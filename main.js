@@ -10,6 +10,7 @@ import cacheAssetsAsync from './utilities/cacheAssetsAsync';
 class AppContainer extends React.Component {
   state = {
     appIsReady: false,
+    requestHistory: [],
   };
 
   componentWillMount() {
@@ -39,12 +40,16 @@ class AppContainer extends React.Component {
     }
   }
 
+  updateRequestHistory = (request) => {
+    this.setState({ requestHistory: [request, ...this.state.requestHistory] });
+  }
+
   render() {
     if (this.state.appIsReady) {
       return (
         <Root>
           <View style={styles.container}>
-            <Navigator />
+            <Navigator screenProps={{ updateHistory: this.updateRequestHistory, history: this.state.requestHistory }} />
           </View>
         </Root>
       );

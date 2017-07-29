@@ -27,43 +27,23 @@ export default class HistoryScreen extends React.Component {
   constructor(props) {
     super(props);
 
-    const history = [
-      {
-        url: 'api.com/v1/users',
-        type: 'GET',
-      },
-      {
-        url: 'api.com/v2/users',
-        type: 'POST',
-      },
-      {
-        url: 'api.com/v1/locations/2',
-        type: 'DELETE',
-      },
-      {
-        url: 'api.com/v2/users/bob',
-        type: 'PUT',
-      },
-      {
-        url: 'google.com/search',
-        type: 'GET',
-      },
-      {
-        url: 'google.com/imag12nj3j213jn3122112212121jn2j3n1es',
-        type: 'POST',
-      },
-    ];
-
-    const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+    const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1._id !== r2._id });
     this.state = {
-      dataSource: ds.cloneWithRows(history),
+      dataSource: ds.cloneWithRows([]),
     };
+  }
+
+  // Update state of history screen when user makes a new request
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      dataSource: this.state.dataSource.cloneWithRows(nextProps.screenProps.history),
+    });
   }
 
   _copyRequest(navigate, request) {
     navigate('Home', {
       requestUrl: request.url,
-      requestType: request.type.toLowerCase(),
+      requestType: request.method.toLowerCase(),
     });
   }
 
@@ -74,13 +54,14 @@ export default class HistoryScreen extends React.Component {
     return (
       <ListView
         style={{ marginHorizontal: 5 }}
+        enableEmptySections
         dataSource={this.state.dataSource}
-        renderRow={(entry, i) => (
-          <Card key={i}>
+        renderRow={(entry) => (
+          <Card key={entry._id}>
             <CardItem header>
               <ExpandableText style={{ fontWeight: 'bold', maxWidth: '75%' }} text={entry.url} />
               <Right>
-                <RequestBadge type={entry.type} />
+                <RequestBadge type={entry.method.toUpperCase()} />
               </Right>
             </CardItem>
             <CardItem>
