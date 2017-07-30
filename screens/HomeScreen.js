@@ -2,6 +2,8 @@ import React from 'react';
 
 import axios from 'axios';
 
+import Expo from 'expo';
+
 import {
   Image,
   Linking,
@@ -13,6 +15,7 @@ import {
   TextInput,
   Text,
   Keyboard,
+  StatusBar,
 } from 'react-native';
 
 import {
@@ -29,24 +32,38 @@ import {
   Right,
 } from 'native-base';
 
+import { MaterialIcons } from '@expo/vector-icons';
+
 import { Col, Row, Grid } from 'react-native-easy-grid';
 
 import validator from 'validator';
 
 import normalize from 'normalize-url';
 
-import { MonoText } from '../components/StyledText';
-
 import { ExpandableText } from '../components/ExpandableText';
 
 import styles from '../styles/homeScreen/style';
 
+import Colors from '../constants/Colors';
+
 export default class HomeScreen extends React.Component {
-  static route = {
-    navigationBar: {
+  static navigationOptions({ navigation }) {
+    return {
       title: 'Home',
-    },
-  };
+      tabBarLabel: 'Home',
+      headerStyle: {
+        height: Platform.OS === 'ios' ? 64 : (56 + StatusBar.currentHeight),
+        paddingTop: Platform.OS === 'ios' ? 20 : StatusBar.currentHeight,
+      },
+      tabBarIcon: ({ tintColor }) => (
+        <MaterialIcons
+          name="home"
+          size={25}
+          color={tintColor}
+        />
+      ),
+    };
+  }
 
   constructor(props) {
     super(props);
@@ -60,6 +77,15 @@ export default class HomeScreen extends React.Component {
     showResponseBody: true,
     responseHeaders: {},
   };
+
+  // Update state of request screen when user attempts to copy request from history screen
+  componentWillReceiveProps(nextProps) {
+    const { navigation: { state: { params } } } = nextProps;
+    if (params !== undefined) {
+      this.setState({ url: params.requestUrl });
+      this.setState({ type: params.requestType });
+    }
+  }
 
   updateUrl(input) {
     const urlIsValid = validator.isURL(input);
@@ -95,7 +121,7 @@ export default class HomeScreen extends React.Component {
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, backgroundColor: '#fff' }}>
         <View style={styles.container}>
           <Picker
             style={{ flex: 0.2 }}
@@ -120,12 +146,13 @@ export default class HomeScreen extends React.Component {
           </Picker>
           <Item rounded style={{ flex: 0.4, height: 50 }}>
             <Input
+              value={this.state.url}
               placeholder='Enter request URL'
               onChangeText={(text) => this.updateUrl(text)}
             />
           </Item>
           <Button
-            style={{ flex: 0.1 }} rounded info
+            style={{ flex: 0.1, backgroundColor: Colors.mainTheme }} rounded
             onPress={this._handleHelpPress}
           >
             <Text style={{ textAlign: 'center', paddingLeft: 5 }}>Send</Text>
@@ -210,18 +237,19 @@ export default class HomeScreen extends React.Component {
 
   _handleHelpPress = async () => {
     Keyboard.dismiss();
-    console.log(`Update url: ${this.state.url}`);
     const requestTime = (new Date()).getTime();
+    const requestObj = {
+      method: this.state.type,
+      url: this.state.url,
+    };
     if (this.state.valid) {
-      await axios({
-        method: this.state.type,
-        url: this.state.url,
-      }).then((response) => {
+      await axios(requestObj).then((response) => {
         const responseStatus = response ? response.status : '';
         this._handleResponseTime(requestTime);
         this.setState({ res: JSON.stringify(response.data, null, '\t') });
         this.setState({ status: responseStatus });
         this.setState({ responseHeaders: response.headers });
+        this.props.screenProps.updateHistory({ ...requestObj, _id: requestTime });
       }).catch((error) => {
         this._handleResponseTime(requestTime);
         const responseStatus = error.response ? error.response.status : '';
