@@ -50,44 +50,51 @@ export default class HistoryScreen extends React.Component {
   render() {
     // TODO: generate UID for each object
     const { navigate } = this.props.navigation;
-
-    return (
-      <ListView
-        style={{ marginHorizontal: 5 }}
-        enableEmptySections
-        dataSource={this.state.dataSource}
-        renderRow={(entry) => (
-          <Card key={entry._id}>
-            <CardItem header>
-              <ExpandableText style={{ fontWeight: 'bold', maxWidth: '75%' }} text={entry.url} />
-              <Right>
-                <RequestBadge type={entry.method.toUpperCase()} />
-              </Right>
-            </CardItem>
-            <CardItem>
-              <Body>
-                <Text>
+    if (this.state.dataSource.getRowCount() > 0) {
+      return (
+        <ListView
+          style={{ marginHorizontal: 5 }}
+          enableEmptySections
+          dataSource={this.state.dataSource}
+          renderRow={(entry) => (
+            <Card key={entry._id}>
+              <CardItem header>
+                <ExpandableText style={{ fontWeight: 'bold', maxWidth: '75%' }} text={entry.url} />
+                <Right>
+                  <RequestBadge type={entry.method.toUpperCase()} />
+                </Right>
+              </CardItem>
+              <CardItem>
+                <Body>
+                  <Text>
                       Body
-                </Text>
-              </Body>
-            </CardItem>
-            <View
-              style={{
-                borderBottomColor: '#d6d7da',
-                borderBottomWidth: 0.6,
-              }}
-            />
-            <CardItem footer>
-              <Text>Footer</Text>
-              <Right>
-                <Text style={{ color: Colors.mainTheme }} onPress={() => this._copyRequest(navigate, entry)}>Copy Request</Text>
-              </Right>
-            </CardItem>
-          </Card>
-        )}
-        onEndReached={this._onEndReached}
-        initialListSize={5}
-      />
+                  </Text>
+                </Body>
+              </CardItem>
+              <View
+                style={{
+                  borderBottomColor: '#d6d7da',
+                  borderBottomWidth: 0.6,
+                }}
+              />
+              <CardItem footer>
+                <Text>Footer</Text>
+                <Right>
+                  <Text style={{ color: Colors.mainTheme }} onPress={() => this._copyRequest(navigate, entry)}>Copy Request</Text>
+                </Right>
+              </CardItem>
+            </Card>
+          )}
+          onEndReached={this._onEndReached}
+          initialListSize={5}
+        />
+      );
+    }
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Uh oh, you haven't made any requests yet.</Text>
+        <Text style={{ color: Colors.mainTheme }} onPress={() => navigate('Home')}>Make your first request</Text>
+      </View>
     );
   }
 }

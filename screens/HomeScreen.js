@@ -72,7 +72,7 @@ export default class HomeScreen extends React.Component {
   state = {
     type: 'get',
     url: null,
-    res: 'test',
+    res: '',
     valid: false,
     showResponseBody: true,
     responseHeaders: {},
