@@ -44,12 +44,20 @@ class AppContainer extends React.Component {
     this.setState({ requestHistory: [request, ...this.state.requestHistory] });
   }
 
+  _clearRequestHistory = () => {
+    this.setState({ requestHistory: [] });
+  }
+
   render() {
     if (this.state.appIsReady) {
       return (
         <Root>
           <View style={styles.container}>
-            <Navigator screenProps={{ updateHistory: this.updateRequestHistory, history: this.state.requestHistory }} />
+            <Navigator screenProps={{
+              updateHistory: this.updateRequestHistory,
+              history: this.state.requestHistory,
+              clearRequestHistory: this._clearRequestHistory }}
+            />
           </View>
         </Root>
       );
