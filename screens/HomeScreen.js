@@ -2,17 +2,13 @@ import React from 'react';
 
 import axios from 'axios';
 
-import Expo from 'expo';
-
 import {
-  Image,
   Linking,
   Platform,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
-  TextInput,
   Text,
   Keyboard,
   StatusBar,
@@ -21,8 +17,6 @@ import {
 import {
   Item,
   Input,
-  Label,
-  Picker,
   Content,
   Button,
   Toast,
@@ -30,6 +24,7 @@ import {
   ListItem,
   Left,
   Right,
+  Container,
 } from 'native-base';
 
 import { MaterialIcons } from '@expo/vector-icons';
@@ -44,13 +39,14 @@ import { ExpandableText } from '../components/ExpandableText';
 
 import styles from '../styles/homeScreen/style';
 
-import Colors from '../constants/Colors';
+import { RequestPicker } from '../components/RequestPicker';
 
 export default class HomeScreen extends React.Component {
   static navigationOptions({ navigation }) {
     return {
-      title: 'Home',
+      title: '',
       tabBarLabel: 'Home',
+      header: null,
       headerStyle: {
         height: Platform.OS === 'ios' ? 64 : (56 + StatusBar.currentHeight),
         paddingTop: Platform.OS === 'ios' ? 20 : StatusBar.currentHeight,
@@ -96,7 +92,7 @@ export default class HomeScreen extends React.Component {
     this.setState({ url: normalizedUrl });
   }
 
-  updatePick(value) {
+  updatePick = (value) => {
     this.setState({ type: value });
     console.log(`Update request type: ${this.state.type}`);
   }
@@ -121,46 +117,45 @@ export default class HomeScreen extends React.Component {
 
   render() {
     return (
-      <View style={{ flex: 1, backgroundColor: '#fff' }}>
+      <View style={{ flex: 1, backgroundColor: '#f7f7f7', paddingTop: StatusBar.currentHeight }}>
         <View style={styles.container}>
-          <Picker
-            style={{ flex: 0.2 }}
-            selectedValue={this.state.type}
-            onValueChange={(value) => this.updatePick(value)}
-          >
-            <Picker.Item label="GET" value="get" />
-            <Picker.Item label="PUT" value="put" />
-            <Picker.Item label="POST" value="post" />
-            <Picker.Item label="PATCH" value="patch" />
-            <Picker.Item label="DELETE" value="delete" />
-            <Picker.Item label="COPY" value="copy" />
-            <Picker.Item label="HEAD" value="head" />
-            <Picker.Item label="OPTIONS" value="options" />
-            <Picker.Item label="LINK" value="link" />
-            <Picker.Item label="UNLINK" value="unlink" />
-            <Picker.Item label="PURGE" value="purge" />
-            <Picker.Item label="LOCK" value="lock" />
-            <Picker.Item label="UNLOCK" value="unlock" />
-            <Picker.Item label="PROPFIND" value="propfind" />
-            <Picker.Item label="VIEW" value="view" />
-          </Picker>
-          <Item rounded style={{ flex: 0.4, height: 50 }}>
+          <Container style={StyleSheet.flatten(styles.pickerContainer)}>
+            <Content>
+              <RequestPicker updatePick={this.updatePick} type={this.state.type} />
+            </Content>
+          </Container>
+          <Item style={StyleSheet.flatten(styles.urlBox)}>
             <Input
+              style={StyleSheet.flatten(styles.url)}
               value={this.state.url}
               placeholder='Enter request URL'
               onChangeText={(text) => this.updateUrl(text)}
             />
           </Item>
           <Button
-            style={{ flex: 0.1, backgroundColor: Colors.mainTheme }} rounded
+            transparent
+            style={StyleSheet.flatten(styles.requestHeader)}
+          >
+            <MaterialIcons
+              name="menu"
+              size={25}
+              color={'#bcccd1'}
+            />
+          </Button>
+          <Button
+            style={StyleSheet.flatten(styles.sendButton)}
             onPress={this._handleHelpPress}
           >
-            <Text style={{ textAlign: 'center', paddingLeft: 5 }}>Send</Text>
+            <MaterialIcons
+              name="search"
+              size={25}
+              color={'white'}
+            />
           </Button>
         </View>
         <Grid style={styles.responseGrid}>
           <Row style={styles.responseTab}>
-            <Col size={20} style={styles.viewCol}>
+            <Col size={15} style={styles.viewCol}>
               <TouchableOpacity onPress={() => this._handleSwitchResponseView('body')}>
                 <Text style={this._handleSelectedStyle('body')}>Body</Text>
               </TouchableOpacity>
@@ -170,9 +165,9 @@ export default class HomeScreen extends React.Component {
                 <Text style={this._handleSelectedStyle('headers')}>Headers</Text>
               </TouchableOpacity>
             </Col>
-            <Col size={15}><TouchableOpacity /></Col>
-            <Col size={20}><Text style={styles.responseStat}>Status: {this.state.status}</Text></Col>
-            <Col size={25}><Text style={styles.responseStat}>Time: {this.state.time}</Text></Col>
+            <Col style={styles.viewCol} size={10} />
+            <Col style={styles.viewCol} size={25}><Text style={styles.responseStat}>Status: {this.state.status}</Text></Col>
+            <Col style={styles.viewCol} size={30}><Text style={styles.responseStat}>Time: {this.state.time}</Text></Col>
           </Row>
           <Row style={{ flex: 1.0 }}>
             <ScrollView style={styles.responseContainer}>
