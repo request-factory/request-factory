@@ -1,6 +1,6 @@
 import React from 'react';
 import { Badge, Text } from 'native-base';
-import { requestColours } from '..//common/helpers';
+import { requestColours } from '../common/helpers';
 
 export class RequestBadge extends React.Component {
   constructor(props) {
