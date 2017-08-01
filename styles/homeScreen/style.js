@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 3,
     paddingLeft: 10,
     flex: 0.30,
-    height: 50,
+    height: 45,
   },
   url: {
     fontSize: 14,
