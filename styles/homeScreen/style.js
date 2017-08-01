@@ -157,14 +157,15 @@ const styles = StyleSheet.create({
   },
   requestHeader: {
     borderWidth: 0,
-    height: 50,
-    flex: 0.08,
     marginRight: 10,
     backgroundColor: 'white',
-    borderBottomRightRadius: 3,
-    borderTopRightRadius: 3,
     shadowColor: 'transparent',
     shadowOpacity: 0,
+  },
+  requestPicker: {
+    borderBottomRightRadius: 5,
+    borderTopRightRadius: 5,
+    overflow: 'hidden',
   },
 });
 
