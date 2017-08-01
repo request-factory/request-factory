@@ -20,7 +20,7 @@ export class RequestPicker extends React.Component {
     return (
       <View style={[styles.requestPicker, { backgroundColor: this.state.colour }]} >
         <Picker
-          style={{ width: 180, height: 40, color: 'white' }}
+          style={{ width: 160, height: 35, color: 'white' }}
           mode="dropdown"
           selectedValue={this.props.type}
           onValueChange={(value) => this.props.updatePick(value)}

@@ -130,6 +130,8 @@ export default class HomeScreen extends React.Component {
               value={this.state.url}
               placeholder='Enter request URL'
               onChangeText={(text) => this.updateUrl(text)}
+              returnKeyType='send'
+              onSubmitEditing={this._handleHelpPress}
             />
           </Item>
           <Button
@@ -142,7 +144,7 @@ export default class HomeScreen extends React.Component {
               color={'#bcccd1'}
             />
           </Button>
-          <Button
+          {/* <Button
             style={StyleSheet.flatten(styles.sendButton)}
             onPress={this._handleHelpPress}
           >
@@ -151,7 +153,7 @@ export default class HomeScreen extends React.Component {
               size={25}
               color={'white'}
             />
-          </Button>
+          </Button> */}
         </View>
         <Grid style={styles.responseGrid}>
           <Row style={styles.responseTab}>

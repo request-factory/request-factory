@@ -129,9 +129,9 @@ const styles = StyleSheet.create({
     color: '#2e78b7',
   },
   pickerContainer: {
-    flex: 0.22,
+    flex: 0.13,
     marginRight: 10,
-    height: 40,
+    height: 35,
     marginTop: 5,
     borderBottomRightRadius: 7,
     borderTopRightRadius: 7,
