@@ -56,7 +56,9 @@ class AppContainer extends React.Component {
   }
 
   _clearRequestHistory = () => {
-    this.setState({ requestHistory: [] });
+    this.setState({ requestHistory: [] },
+      this._updateLocalStorage
+    );
   }
 
   render() {
