@@ -79,7 +79,9 @@ class AppContainer extends React.Component {
   }
 
   render() {
-    if (this.state.appIsReady) {
+    // Render Navigator when night mode state has been set and app data has been
+    // been fetched from local storage.
+    if (this.state.nightModeToggled != null && this.state.appIsReady) {
       return (
         <Root>
           <View style={styles.container}>
@@ -94,9 +96,8 @@ class AppContainer extends React.Component {
           </View>
         </Root>
       );
-    } else {
-      return <Expo.AppLoading />;
     }
+    return <Expo.AppLoading />;
   }
 }
 
