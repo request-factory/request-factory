@@ -14,4 +14,9 @@ export default {
   greyColour: '#384259',
   whiteColour: '#fff',
   mainTheme: '#ff5d7d',
+  requestGet: '#ba68c8',
+  requestPut: '#4db6ac',
+  requestPost: '#e57373',
+  requestDelete: '#ffb74d',
+  requestDefault: '#039be5',
 };
