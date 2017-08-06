@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, StyleSheet, StatusBar, Platform, Alert } from 'react-native';
+import { ScrollView, StyleSheet, StatusBar, Platform, Alert, Linking } from 'react-native';
 import { Container, Header, Content, List, ListItem, Text, Separator } from 'native-base';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -31,6 +31,10 @@ export default class SettingsScreen extends React.Component {
     );
   }
 
+  _viewContributors = () => {
+    Linking.openURL('https://github.com/jessecordeiro/supernova-mobile/graphs/contributors');
+  }
+
   render() {
     return (
       <Container>
@@ -52,7 +56,7 @@ export default class SettingsScreen extends React.Component {
             <Separator bordered>
               <Text>DEVELOPMENT</Text>
             </Separator>
-            <ListItem>
+            <ListItem onPress={this._viewContributors}>
               <Text>
                   Contributors
               </Text>
