@@ -7,7 +7,6 @@ export class ExpandableText extends React.Component {
     this.state = {
       text: props.text,
       truncated: 1,
-      style: props.style,
     };
   }
 
@@ -23,7 +22,7 @@ export class ExpandableText extends React.Component {
       <Text
         numberOfLines={this.state.truncated}
         onPress={this._handleTruncate}
-        style={this.state.style}
+        {...this.props}
       >
         {this.state.text}
       </Text>

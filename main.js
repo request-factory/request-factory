@@ -6,6 +6,7 @@ import { Root } from 'native-base';
 
 import Navigator from './navigation/RootNavigation';
 import cacheAssetsAsync from './utilities/cacheAssetsAsync';
+import themes from './constants/Themes';
 
 const HISTORY_KEY = 'request_history';
 
@@ -13,6 +14,7 @@ class AppContainer extends React.Component {
   state = {
     appIsReady: false,
     requestHistory: [],
+    theme: themes.lightTheme,
   };
 
   componentWillMount() {
@@ -61,6 +63,14 @@ class AppContainer extends React.Component {
     );
   }
 
+  _toggleNightMode = (value) => {
+    if (value) {
+      this.setState({ theme: themes.darkTheme });
+    } else {
+      this.setState({ theme: themes.lightTheme });
+    }
+  }
+
   render() {
     if (this.state.appIsReady) {
       return (
@@ -69,7 +79,9 @@ class AppContainer extends React.Component {
             <Navigator screenProps={{
               updateHistory: this.updateRequestHistory,
               history: this.state.requestHistory,
-              clearRequestHistory: this._clearRequestHistory }}
+              clearRequestHistory: this._clearRequestHistory,
+              toggleNightMode: this._toggleNightMode,
+              theme: this.state.theme }}
             />
           </View>
         </Root>

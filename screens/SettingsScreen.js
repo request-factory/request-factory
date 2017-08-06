@@ -1,16 +1,18 @@
 import React from 'react';
-import { ScrollView, StyleSheet, StatusBar, Platform, Alert, Linking } from 'react-native';
-import { Container, Header, Content, List, ListItem, Text, Separator } from 'native-base';
+import { ScrollView, StyleSheet, StatusBar, Platform, Alert, Linking, Switch } from 'react-native';
+import { Container, Header, Content, List, ListItem, Text, Separator, Right } from 'native-base';
 import { MaterialIcons } from '@expo/vector-icons';
 
 export default class SettingsScreen extends React.Component {
-  static navigationOptions = ({ navigation }) => ({
+  static navigationOptions = ({ navigation, screenProps }) => ({
     title: 'Settings',
     tabBarLabel: 'Settings',
     headerStyle: {
       height: Platform.OS === 'ios' ? 64 : (56 + StatusBar.currentHeight),
       paddingTop: Platform.OS === 'ios' ? 20 : StatusBar.currentHeight,
+      ...screenProps.theme.header,
     },
+    headerTintColor: screenProps.theme.text.color,
     tabBarIcon: ({ tintColor }) => (
       <MaterialIcons
         name="settings"
@@ -19,6 +21,18 @@ export default class SettingsScreen extends React.Component {
       />
     ),
   })
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      switchToggled: false,
+    };
+  }
+
+  _toggleTheme = (value) => {
+    this.setState({ switchToggled: value });
+    this.props.screenProps.toggleNightMode(value);
+  }
 
   _clearRequestHistory = () => {
     Alert.alert(
@@ -37,27 +51,35 @@ export default class SettingsScreen extends React.Component {
 
   render() {
     return (
-      <Container>
+      <Container style={this.props.screenProps.theme.container}>
         <Content>
           <List>
-            <Separator bordered>
+            <Separator bordered style={this.props.screenProps.theme.separator}>
               <Text>APPLICATION</Text>
             </Separator>
             <ListItem>
-              <Text>
-                  Change theme
+              <Text style={this.props.screenProps.theme.text}>
+                  Night Mode
               </Text>
+              <Right>
+                <Switch
+                  onValueChange={(value) => this._toggleTheme(value)}
+                  value={this.state.switchToggled}
+                />
+              </Right>
             </ListItem>
             <ListItem onPress={this._clearRequestHistory}>
-              <Text>
-                  Delete request history
+              <Text style={this.props.screenProps.theme.text}>
+                  Delete Request History
               </Text>
             </ListItem>
-            <Separator bordered>
-              <Text>DEVELOPMENT</Text>
+            <Separator bordered style={this.props.screenProps.theme.separator}>
+              <Text>
+                DEVELOPMENT
+              </Text>
             </Separator>
             <ListItem onPress={this._viewContributors}>
-              <Text>
+              <Text style={this.props.screenProps.theme.text}>
                   Contributors
               </Text>
             </ListItem>
