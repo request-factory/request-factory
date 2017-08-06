@@ -5,25 +5,23 @@ import Colors from '../../constants/Colors';
 const styles = StyleSheet.create({
   container: {
     flex: 0.2,
-    backgroundColor: '#fff',
+    backgroundColor: '#f7f7f7',
     flexDirection: 'row',
     marginTop: 5,
-    marginHorizontal: 5,
+    paddingTop: 10,
   },
   responseContainer: {
-    borderRadius: 4,
     borderWidth: 0.5,
     borderColor: '#d6d7da',
+    backgroundColor: 'white',
   },
   responseGrid: {
     flex: 1.6,
-    marginHorizontal: 5,
   },
   responseTab: {
     flex: 0.1,
     padding: 0,
-    margin: 0,
-    borderRadius: 4,
+    marginTop: 10,
     borderWidth: 0.5,
     borderColor: '#d6d7da',
     backgroundColor: '#f7f7f7',
@@ -40,14 +38,12 @@ const styles = StyleSheet.create({
     color: Colors.mainTheme,
   },
   viewCol: {
-    borderRadius: 2,
-    borderWidth: 0.5,
-    borderColor: '#d6d7da',
     backgroundColor: '#f7f7f7',
   },
   responseStat: {
     marginTop: 10,
-    textAlign: 'center',
+    color: '#c6c7c6',
+    textAlign: 'left',
   },
   developmentModeText: {
     marginBottom: 20,
@@ -131,6 +127,45 @@ const styles = StyleSheet.create({
   helpLinkText: {
     fontSize: 14,
     color: '#2e78b7',
+  },
+  pickerContainer: {
+    flex: 0.13,
+    marginRight: 10,
+    height: 35,
+    marginTop: 5,
+    borderBottomRightRadius: 7,
+    borderTopRightRadius: 7,
+  },
+  sendButton: {
+    marginTop: 5,
+    height: 40,
+    flex: 0.05,
+    borderBottomLeftRadius: 7,
+    borderTopLeftRadius: 7,
+    backgroundColor: '#4fca34',
+  },
+  urlBox: {
+    backgroundColor: 'white',
+    borderBottomLeftRadius: 3,
+    borderTopLeftRadius: 3,
+    paddingLeft: 10,
+    flex: 0.30,
+    height: 45,
+  },
+  url: {
+    fontSize: 14,
+  },
+  requestHeader: {
+    borderWidth: 0,
+    marginRight: 10,
+    backgroundColor: 'white',
+    shadowColor: 'transparent',
+    shadowOpacity: 0,
+  },
+  requestPicker: {
+    borderBottomRightRadius: 5,
+    borderTopRightRadius: 5,
+    overflow: 'hidden',
   },
 });
 
