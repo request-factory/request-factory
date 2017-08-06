@@ -22,15 +22,7 @@ export default class SettingsScreen extends React.Component {
     ),
   })
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      switchToggled: false,
-    };
-  }
-
   _toggleTheme = (value) => {
-    this.setState({ switchToggled: value });
     this.props.screenProps.toggleNightMode(value);
   }
 
@@ -64,7 +56,7 @@ export default class SettingsScreen extends React.Component {
               <Right>
                 <Switch
                   onValueChange={(value) => this._toggleTheme(value)}
-                  value={this.state.switchToggled}
+                  value={this.props.screenProps.isNightModeToggled}
                 />
               </Right>
             </ListItem>

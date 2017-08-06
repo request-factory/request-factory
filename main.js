@@ -9,6 +9,7 @@ import cacheAssetsAsync from './utilities/cacheAssetsAsync';
 import themes from './constants/Themes';
 
 const HISTORY_KEY = 'request_history';
+const NIGHT_MODE_KEY = 'night_mode';
 
 class AppContainer extends React.Component {
   state = {
@@ -19,10 +20,14 @@ class AppContainer extends React.Component {
 
   componentWillMount() {
     this._loadAssetsAsync();
-    AsyncStorage.getItem(HISTORY_KEY).then((value) => {
-      if (value != null) {
-        this.setState({ requestHistory: JSON.parse(value) });
+    AsyncStorage.multiGet([HISTORY_KEY, NIGHT_MODE_KEY]).then((data) => {
+      if (data != null) {
+        this.setState({ requestHistory: JSON.parse(data[0][1]) });
       }
+      // AsyncStorage stores data as strings, we are using this expression to convert data back to a boolean
+      const isNightModeToggled = data[1][1] != null ? (data[1][1] == 'true') : false;
+      this.setState({ nightModeToggled: isNightModeToggled });
+      this._toggleNightMode(isNightModeToggled);
     }).then(this.setState({ appIsReady: true }));
   }
 
@@ -69,6 +74,8 @@ class AppContainer extends React.Component {
     } else {
       this.setState({ theme: themes.lightTheme });
     }
+    this.setState({ nightModeToggled: value });
+    AsyncStorage.setItem(NIGHT_MODE_KEY, value.toString());
   }
 
   render() {
@@ -81,7 +88,8 @@ class AppContainer extends React.Component {
               history: this.state.requestHistory,
               clearRequestHistory: this._clearRequestHistory,
               toggleNightMode: this._toggleNightMode,
-              theme: this.state.theme }}
+              theme: this.state.theme,
+              isNightModeToggled: this.state.nightModeToggled }}
             />
           </View>
         </Root>
