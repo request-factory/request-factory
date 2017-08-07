@@ -68,7 +68,7 @@ export default class HomeScreen extends React.Component {
   state = {
     type: 'get',
     url: null,
-    res: 'test',
+    res: '',
     valid: false,
     showResponseBody: true,
     responseHeaders: {},
@@ -98,7 +98,7 @@ export default class HomeScreen extends React.Component {
   }
 
   _renderResponseBody() {
-    return this.state.showResponseBody ? <Text>{this.state.res}</Text> : null;
+    return this.state.showResponseBody ? <Text style={this.props.screenProps.theme.text}>{this.state.res}</Text> : null;
   }
 
   _renderResponseHeaders() {
@@ -106,8 +106,8 @@ export default class HomeScreen extends React.Component {
       return (<List>
         {Object.keys(this.state.responseHeaders).map((headerKey) => (
           <ListItem key={headerKey}>
-            <Left><ExpandableText text={headerKey} /></Left>
-            <Right><ExpandableText text={this.state.responseHeaders[headerKey]} /></Right>
+            <Left><ExpandableText text={headerKey} style={this.props.screenProps.theme.text} /></Left>
+            <Right><ExpandableText text={this.state.responseHeaders[headerKey]} style={this.props.screenProps.theme.text} /></Right>
           </ListItem>
         ))}
       </List>);
@@ -117,26 +117,26 @@ export default class HomeScreen extends React.Component {
 
   render() {
     return (
-      <View style={{ flex: 1, backgroundColor: '#f7f7f7', paddingTop: StatusBar.currentHeight }}>
-        <View style={styles.container}>
+      <View style={{ flex: 1, paddingTop: StatusBar.currentHeight, ...this.props.screenProps.theme.requestContainer }}>
+        <View style={[styles.container, this.props.screenProps.theme.requestContainer]}>
           <Container style={StyleSheet.flatten(styles.pickerContainer)}>
             <Content>
               <RequestPicker updatePick={this.updatePick} type={this.state.type} />
             </Content>
           </Container>
-          <Item style={StyleSheet.flatten(styles.urlBox)}>
+          <View style={[styles.urlBox, this.props.screenProps.theme.urlBox]}>
             <Input
-              style={StyleSheet.flatten(styles.url)}
+              style={StyleSheet.flatten([styles.url, this.props.screenProps.theme.text])}
               value={this.state.url}
               placeholder='Enter request URL'
               onChangeText={(text) => this.updateUrl(text)}
               returnKeyType='send'
               onSubmitEditing={this._handleHelpPress}
             />
-          </Item>
+          </View>
           <Button
             transparent
-            style={StyleSheet.flatten(styles.requestHeader)}
+            style={StyleSheet.flatten([styles.requestHeader, this.props.screenProps.theme.urlBox])}
           >
             <MaterialIcons
               name="menu"
@@ -156,23 +156,23 @@ export default class HomeScreen extends React.Component {
           </Button> */}
         </View>
         <Grid style={styles.responseGrid}>
-          <Row style={styles.responseTab}>
-            <Col size={15} style={styles.viewCol}>
+          <Row style={[styles.responseTab, this.props.screenProps.theme.requestTab]}>
+            <Col size={15} style={this.props.screenProps.theme.requestContainer}>
               <TouchableOpacity onPress={() => this._handleSwitchResponseView('body')}>
                 <Text style={this._handleSelectedStyle('body')}>Body</Text>
               </TouchableOpacity>
             </Col>
-            <Col size={20} style={styles.viewCol}>
+            <Col size={20} style={this.props.screenProps.theme.requestContainer}>
               <TouchableOpacity onPress={() => this._handleSwitchResponseView('headers')}>
                 <Text style={this._handleSelectedStyle('headers')}>Headers</Text>
               </TouchableOpacity>
             </Col>
-            <Col style={styles.viewCol} size={10} />
-            <Col style={styles.viewCol} size={25}><Text style={styles.responseStat}>Status: {this.state.status}</Text></Col>
-            <Col style={styles.viewCol} size={30}><Text style={styles.responseStat}>Time: {this.state.time}</Text></Col>
+            <Col style={this.props.screenProps.theme.requestContainer} size={10} />
+            <Col style={this.props.screenProps.theme.requestContainer} size={25}><Text style={[styles.responseStat, this.props.screenProps.theme.responseStat]}>Status: {this.state.status}</Text></Col>
+            <Col style={this.props.screenProps.theme.requestContainer} size={30}><Text style={[styles.responseStat, this.props.screenProps.theme.responseStat]}>Time: {this.state.time}</Text></Col>
           </Row>
           <Row style={{ flex: 1.0 }}>
-            <ScrollView style={styles.responseContainer}>
+            <ScrollView style={this.props.screenProps.theme.responseContainer}>
               {this._renderResponseBody()}
               {this._renderResponseHeaders()}
             </ScrollView>
@@ -210,7 +210,7 @@ export default class HomeScreen extends React.Component {
     } else if (!this.state.showResponseBody && name === 'headers') {
       return styles.viewTabSelected;
     }
-    return styles.viewTab;
+    return [styles.viewTab, this.props.screenProps.theme.text];
   }
 
   _handleSwitchResponseView = (name) => {

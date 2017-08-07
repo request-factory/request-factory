@@ -5,7 +5,6 @@ import Colors from '../../constants/Colors';
 const styles = StyleSheet.create({
   container: {
     flex: 0.2,
-    backgroundColor: '#f7f7f7',
     flexDirection: 'row',
     marginTop: 5,
     paddingTop: 10,
@@ -13,7 +12,6 @@ const styles = StyleSheet.create({
   responseContainer: {
     borderWidth: 0.5,
     borderColor: '#d6d7da',
-    backgroundColor: 'white',
   },
   responseGrid: {
     flex: 1.6,
@@ -24,7 +22,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     borderWidth: 0.5,
     borderColor: '#d6d7da',
-    backgroundColor: '#f7f7f7',
   },
   viewTab: {
     marginTop: 10,
@@ -42,7 +39,6 @@ const styles = StyleSheet.create({
   },
   responseStat: {
     marginTop: 10,
-    color: '#c6c7c6',
     textAlign: 'left',
   },
   developmentModeText: {
@@ -145,7 +141,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#4fca34',
   },
   urlBox: {
-    backgroundColor: 'white',
     borderBottomLeftRadius: 3,
     borderTopLeftRadius: 3,
     paddingLeft: 10,
@@ -158,7 +153,6 @@ const styles = StyleSheet.create({
   requestHeader: {
     borderWidth: 0,
     marginRight: 10,
-    backgroundColor: 'white',
     shadowColor: 'transparent',
     shadowOpacity: 0,
   },
