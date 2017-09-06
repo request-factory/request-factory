@@ -93,27 +93,27 @@ export default class HomeScreen extends React.Component {
   saveParameters() {
     // Remove items with no key from request parameters
     // TODO: Display warning message when user has empty parameters
-    const newData = [...this.state.requestParameters];
+    const newData = [...this.props.screenProps.requestParameters];
     for (let i = 0; i < newData.length; i++) {
       if (newData[i][0] === '') {
         newData.splice(i, 1);
         i--;
       }
     }
-    this.setState({ requestParameters: newData });
+    this.props.screenProps.requestParameters = newData;
   }
 
   saveHeaders() {
     // Remove items with no key from request headers
     // TODO: Display warning message when user has empty headers
-    const newData = [...this.state.requestHeaders];
+    const newData = [...this.props.screenProps.requestHeaders];
     for (let i = 0; i < newData.length; i++) {
       if (newData[i][0] === '') {
         newData.splice(i, 1);
         i--;
       }
     }
-    this.setState({ requestHeaders: newData });
+    this.props.screenProps.requestHeaders = newData;
   }
 
   convertList(list) {
