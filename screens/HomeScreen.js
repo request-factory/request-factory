@@ -49,9 +49,6 @@ import { RequestPicker } from '../components/RequestPicker';
 
 import Colors from '../constants/Colors';
 
-const requestParametersData = [];
-const requestHeadersData = [];
-
 export default class HomeScreen extends React.Component {
   static navigationOptions({ navigation }) {
     return {
@@ -74,47 +71,16 @@ export default class HomeScreen extends React.Component {
 
   constructor(props) {
     super(props);
-    this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1._id !== r2._id });
     this.state = {
       type: 'get',
       url: null,
       res: '',
       valid: false,
       showResponseBody: true,
-      showParameters: true,
-      modalVisible: false,
       responseHeaders: {},
-      requestParameters: requestParametersData,
-      requestHeaders: requestHeadersData,
     };
   }
 
-  deleteRow(secId, rowId, rowMap) {
-    // Delete row where slide button was pressed
-    rowMap[`${secId}${rowId}`].props.closeRow();
-    if (this.state.showParameters) {
-      const newData = [...this.state.requestParameters];
-      newData.splice(rowId, 1);
-      this.setState({ requestParameters: newData });
-    } else {
-      const newData = [...this.state.requestHeaders];
-      newData.splice(rowId, 1);
-      this.setState({ requestHeaders: newData });
-    }
-  }
-
-  addRow() {
-    // Add a row to request parameters or headers, depending on which is currently being shown
-    if (this.state.showParameters) {
-      const newData = [...this.state.requestParameters];
-      newData.push(['', '']);
-      this.setState({ requestParameters: newData });
-    } else {
-      const newData = [...this.state.requestHeaders];
-      newData.push(['', '']);
-      this.setState({ requestHeaders: newData });
-    }
-  }
   // Update state of request screen when user attempts to copy request from history screen
   componentWillReceiveProps(nextProps) {
     const { navigation: { state: { params } } } = nextProps;
@@ -180,15 +146,6 @@ export default class HomeScreen extends React.Component {
     return this.state.showResponseBody ? <Text style={this.props.screenProps.theme.text}>{this.state.res}</Text> : null;
   }
 
-  showModal = (value) => {
-    // If modal is being hidden, save headers and parameters
-    if (!value) {
-      this.saveParameters();
-      this.saveHeaders();
-    }
-    this.setState({ modalVisible: value });
-  }
-
   _renderResponseHeaders() {
     if (!this.state.showResponseBody) {
       return (<List>
@@ -203,7 +160,12 @@ export default class HomeScreen extends React.Component {
     return null;
   }
 
+  _openParametersScreen(navigate) {
+    navigate('RequestOptions');
+  }
+
   render() {
+    const { navigate } = this.props.navigation;
     return (
       <View style={{ flex: 1, paddingTop: StatusBar.currentHeight, ...this.props.screenProps.theme.requestContainer }}>
         <View style={[styles.container, this.props.screenProps.theme.requestContainer]}>
@@ -225,7 +187,7 @@ export default class HomeScreen extends React.Component {
           <Button
             transparent
             style={StyleSheet.flatten([styles.requestHeader, this.props.screenProps.theme.urlBox])}
-            onPress={() => this.showModal(true)}
+            onPress={() => this._openParametersScreen(navigate)}
           >
             <MaterialIcons
               name="menu"
@@ -244,102 +206,6 @@ export default class HomeScreen extends React.Component {
             />
           </Button> */}
         </View>
-        {/*TODO: Move modal CSS to style.js, add theme compatibility */}
-        <Modal
-          animationType={'fade'}
-          transparent
-          visible={this.state.modalVisible}
-          onRequestClose={() => { this.showModal(!this.state.modalVisible); }}
-        >
-          <View style={{ flex: 1 }}>
-            <View style={{ position: 'absolute', width: '100%', height: '100%', backgroundColor: 'grey', opacity: 0.7 }}>
-              <TouchableHighlight
-                style={{ position: 'absolute', width: '100%', height: '100%' }}
-                onPress={() => {
-                  this.showModal(!this.state.modalVisible);
-                }}
-              >
-                <Text />
-              </TouchableHighlight>
-            </View>
-            <View style={[this.props.screenProps.theme.requestContainer,
-              { position: 'absolute', flexDirection: 'column', height: '90%', width: '90%', margin: '5%' }]}
-            >
-              <Row style={{ flex: 0.08 }}>
-                <Col size={50} style={{ justifyContent: 'center', borderColor: '#bcccd1', borderWidth: 0.5 }}>
-                  <TouchableOpacity onPress={() => this._handleSwitchParametersView('parameters')}>
-                    <Text style={this._handleParametersStyle('parameters')}>Parameters</Text>
-                  </TouchableOpacity>
-                </Col>
-                <Col size={50} style={{ justifyContent: 'center', borderColor: '#bcccd1', borderWidth: 0.5 }}>
-                  <TouchableOpacity onPress={() => this._handleSwitchParametersView('headers')}>
-                    <Text style={this._handleParametersStyle('headers')}>Headers</Text>
-                  </TouchableOpacity>
-                </Col>
-              </Row>
-              <ScrollView style={{ flex: 0.8 }}>
-                <List
-                  dataSource={this.ds.cloneWithRows(this._handleParameters())}
-                  enableEmptySections
-                  renderRow={(data, secId, rowId, rowMap) =>
-                    (<ListItem style={{ height: 50, width: '100%' }}>
-                      <Grid>
-                        <Row>
-                          <Col size={50} >
-                            <Input
-                              placeholder='Key'
-                              type='text'
-                              style={{ textAlign: 'center' }}
-                              value={data[0]}
-                              onChangeText={(text) => this._handleUpdateList(text, secId, rowId, rowMap, 0)}
-                            />
-                          </Col>
-                          <Col size={50}>
-                            <Input
-                              type='text'
-                              placeholder='Value'
-                              style={{ textAlign: 'center' }}
-                              value={data[1]}
-                              onChangeText={(text) => this._handleUpdateList(text, secId, rowId, rowMap, 1)}
-                            />
-                          </Col>
-                        </Row>
-                      </Grid>
-                    </ListItem>)}
-                  renderLeftHiddenRow={() =>
-                    ((<Button full>
-                      <Icon active name="information-circle" />
-                    </Button>))}
-                  renderRightHiddenRow={(data, secId, rowId, rowMap) =>
-                    (<Button full danger style={{ height: '100%' }} onPress={() => this.deleteRow(secId, rowId, rowMap)}>
-                      <Icon active name="trash" />
-                    </Button>)}
-                  leftOpenValue={0}
-                  rightOpenValue={-75}
-                />
-                <Button
-                  onPress={() => this.addRow()}
-                  style={{ backgroundColor: 'white', height: 50, width: '100%', justifyContent: 'center', borderColor: '#bcccd1', borderWidth: 0.5 }}
-                >
-                  <Text>New</Text>
-                </Button>
-              </ScrollView>
-              <View
-                style={{ flexDirection: 'row', flex: 0.12, justifyContent: 'center' }}
-              >
-                {/* TODO: Add Cancel button that reverts changes and add some visual feedback to save, cancel and new buttons */}
-                <Button
-                  onPress={() => {
-                    this.showModal(!this.state.modalVisible);
-                  }}
-                  style={{ backgroundColor: Colors.mainTheme }}
-                >
-                  <Text style={{ textAlign: 'center' }}>Save</Text>
-                </Button>
-              </View>
-            </View>
-          </View>
-        </Modal>
         <Grid style={styles.responseGrid}>
           <Row style={[styles.responseTab, this.props.screenProps.theme.requestTab]}>
             <Col size={15} style={[this.props.screenProps.theme.requestContainer, styles.responseCol]}>
@@ -393,37 +259,6 @@ export default class HomeScreen extends React.Component {
     );
   }
 
-  _handleUpdateList(text, secId, rowId, rowMap, index) {
-    // Updates list based on user input
-    rowMap[`${secId}${rowId}`].props.closeRow();
-    if (this.state.showParameters) {
-      const newData = [...this.state.requestParameters];
-      newData[rowId][index] = text;
-      this.setState({ requestParameters: newData });
-    } else {
-      const newData = [...this.state.requestHeaders];
-      newData[rowId][index] = text;
-      this.setState({ requestHeaders: newData });
-    }
-  }
-
-  _handleParameters() {
-    if (this.state.showParameters) {
-      return this.state.requestParameters;
-    }
-    return this.state.requestHeaders;
-  }
-
-  _handleParametersStyle = (name) => {
-    // Changes the colour of the currently selected tab in the parameters modal
-    if (this.state.showParameters && name === 'parameters') {
-      return [styles.viewTab, styles.viewTabSelected];
-    } else if (!this.state.showParameters && name === 'headers') {
-      return [styles.viewTab, styles.viewTabSelected];
-    }
-    return [styles.viewTab, this.props.screenProps.theme.text];
-  }
-
   _handleSelectedStyle = (name) => {
     // Changes the colour of the currently selected tab in the request screen
     if (this.state.showResponseBody && name === 'body') {
@@ -443,15 +278,6 @@ export default class HomeScreen extends React.Component {
     }
   }
 
-  _handleSwitchParametersView = (name) => {
-    // Switches view when tab is changed in parameters modal
-    if (name === 'parameters') {
-      this.setState({ showParameters: true });
-    } else {
-      this.setState({ showParameters: false });
-    }
-  }
-
   _handleLearnMorePress = () => {
     Linking.openURL(
       'https://docs.expo.io/versions/latest/guides/development-mode'
@@ -466,13 +292,13 @@ export default class HomeScreen extends React.Component {
   _handleHelpPress = async () => {
     Keyboard.dismiss();
     const requestTime = (new Date()).getTime();
-    // console.log(this.convertList(this.state.requestHeaders));
-    // console.log(this.convertList(this.state.requestParameters));
+    this.saveParameters();
+    this.saveHeaders();
     const requestObj = {
       method: this.state.type,
       url: this.state.url,
-      headers: this.convertList(this.state.requestHeaders),
-      parameters: this.convertList(this.state.requestParameters),
+      headers: this.convertList(this.props.screenProps.requestHeaders),
+      params: this.convertList(this.props.screenProps.requestParameters),
     };
     if (this.state.valid) {
       await axios(requestObj).then((response) => {

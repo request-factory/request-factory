@@ -10,6 +10,8 @@ import themes from './constants/Themes';
 
 const HISTORY_KEY = 'request_history';
 const NIGHT_MODE_KEY = 'night_mode';
+const requestParametersData = [];
+const requestHeadersData = [];
 
 class AppContainer extends React.Component {
   state = {
@@ -91,7 +93,9 @@ class AppContainer extends React.Component {
               clearRequestHistory: this._clearRequestHistory,
               toggleNightMode: this._toggleNightMode,
               theme: this.state.theme,
-              isNightModeToggled: this.state.nightModeToggled }}
+              isNightModeToggled: this.state.nightModeToggled,
+              requestParameters: requestParametersData,
+              requestHeaders: requestHeadersData }}
             />
           </View>
         </Root>
