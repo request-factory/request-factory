@@ -10,14 +10,18 @@ import themes from './constants/Themes';
 
 const HISTORY_KEY = 'request_history';
 const NIGHT_MODE_KEY = 'night_mode';
-const requestParametersData = [];
-const requestHeadersData = [];
+
 
 class AppContainer extends React.Component {
   state = {
     appIsReady: false,
     requestHistory: [],
     theme: themes.lightTheme,
+    requestBodyType: 'form-data',
+    requestParametersData: [],
+    requestHeadersData: [],
+    bodyFormData: [],
+    bodyUrlEncodedData: [],
   };
 
   componentWillMount() {
@@ -70,6 +74,10 @@ class AppContainer extends React.Component {
     );
   }
 
+  _changeBodyType = (type) => {
+    this.setState({ requestBodyType: type });
+  }
+
   _toggleNightMode = (value) => {
     if (value) {
       this.setState({ theme: themes.darkTheme });
@@ -94,8 +102,12 @@ class AppContainer extends React.Component {
               toggleNightMode: this._toggleNightMode,
               theme: this.state.theme,
               isNightModeToggled: this.state.nightModeToggled,
-              requestParameters: requestParametersData,
-              requestHeaders: requestHeadersData }}
+              requestBodyType: this.state.requestBodyType,
+              changeBodyType: this._changeBodyType,
+              requestParameters: this.state.requestParametersData,
+              requestHeaders: this.state.requestHeadersData,
+              bodyForm: this.state.bodyFormData,
+              bodyUrlEncoded: this.state.bodyUrlEncodedData }}
             />
           </View>
         </Root>

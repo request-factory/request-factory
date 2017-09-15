@@ -290,6 +290,17 @@ export default class HomeScreen extends React.Component {
   }
 
   _handleHelpPress = async () => {
+    let body = [];
+
+    if (this.props.screenProps.requestBodyType === 'form-data') {
+      body = this.props.screenProps.bodyForm;
+    } else if (this.props.screenProps.requestBodyType === 'x-www-form-urlencoded') {
+      body = this.props.screenProps.bodyUrlEncoded;
+    } else {
+      console.log('raw');
+    }
+    //console.log(body);
+    console.log(this.props.screenProps.requestHeaders);
     Keyboard.dismiss();
     const requestTime = (new Date()).getTime();
     this.saveParameters();
@@ -299,7 +310,10 @@ export default class HomeScreen extends React.Component {
       url: this.state.url,
       headers: this.convertList(this.props.screenProps.requestHeaders),
       params: this.convertList(this.props.screenProps.requestParameters),
+
+      // data: this.convertList(this.props.)
     };
+
     if (this.state.valid) {
       await axios(requestObj).then((response) => {
         const responseStatus = response ? response.status : '';
@@ -329,5 +343,6 @@ export default class HomeScreen extends React.Component {
         duration: 3000,
       });
     }
+
   };
 }
