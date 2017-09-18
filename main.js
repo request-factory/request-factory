@@ -11,7 +11,6 @@ import themes from './constants/Themes';
 const HISTORY_KEY = 'request_history';
 const NIGHT_MODE_KEY = 'night_mode';
 
-
 class AppContainer extends React.Component {
   state = {
     appIsReady: false,
@@ -78,6 +77,18 @@ class AppContainer extends React.Component {
     this.setState({ requestBodyType: type });
   }
 
+  _updateList = (tab, newData) => {
+    if (tab === 'Parameters') {
+      this.setState({ requestParametersData: newData });
+    } else if (tab === 'Headers') {
+      this.setState({ requestHeadersData: newData });
+    } else if (tab === 'form-data') {
+      this.setState({ bodyFormData: newData });
+    } else {
+      this.setState({ bodyUrlEncodedData: newData });
+    }
+  }
+
   _toggleNightMode = (value) => {
     if (value) {
       this.setState({ theme: themes.darkTheme });
@@ -102,6 +113,7 @@ class AppContainer extends React.Component {
               toggleNightMode: this._toggleNightMode,
               theme: this.state.theme,
               isNightModeToggled: this.state.nightModeToggled,
+              updateList: this._updateList,
               requestBodyType: this.state.requestBodyType,
               changeBodyType: this._changeBodyType,
               requestParameters: this.state.requestParametersData,

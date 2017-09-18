@@ -290,17 +290,12 @@ export default class HomeScreen extends React.Component {
   }
 
   _handleHelpPress = async () => {
-    let body = [];
-
-    if (this.props.screenProps.requestBodyType === 'form-data') {
-      body = this.props.screenProps.bodyForm;
-    } else if (this.props.screenProps.requestBodyType === 'x-www-form-urlencoded') {
-      body = this.props.screenProps.bodyUrlEncoded;
-    } else {
+    let body = this.convertList(this.props.screenProps.bodyForm);
+    if (this.props.screenProps.requestBodyType === 'x-www-form-urlencoded') {
+      body = this.convertList(this.props.screenProps.bodyUrlEncoded);
+    } else if (this.props.screenProps.requestBodyType === 'raw') {
       console.log('raw');
     }
-    //console.log(body);
-    console.log(this.props.screenProps.requestHeaders);
     Keyboard.dismiss();
     const requestTime = (new Date()).getTime();
     this.saveParameters();
@@ -310,9 +305,11 @@ export default class HomeScreen extends React.Component {
       url: this.state.url,
       headers: this.convertList(this.props.screenProps.requestHeaders),
       params: this.convertList(this.props.screenProps.requestParameters),
-
-      // data: this.convertList(this.props.)
     };
+    // GET requests do not have a body
+    if (this.state.type !== 'get') {
+      requestObj.data = body;
+    }
 
     if (this.state.valid) {
       await axios(requestObj).then((response) => {

@@ -50,46 +50,35 @@ export default class RequestOptionsScreen extends React.Component {
   deleteRow(tab, secId, rowId, rowMap) {
     // Delete row where slide button was pressed
     rowMap[`${secId}${rowId}`].props.closeRow();
+    let newData = [];
     if (tab === 'Parameters') {
-      const newData = [...this.props.screenProps.requestParameters];
-      newData.splice(rowId, 1);
-      this.props.screenProps.requestParameters = newData;
+      newData = [...this.props.screenProps.requestParameters];
     } else if (tab === 'Headers') {
-      const newData = [...this.props.screenProps.requestHeaders];
-      newData.splice(rowId, 1);
-      this.props.screenProps.requestHeaders = newData;
+      newData = [...this.props.screenProps.requestHeaders];
     } else if (tab === 'form-data') {
-      const newData = [...this.props.screenProps.bodyForm];
-      newData.splice(rowId, 1);
-      this.props.screenProps.bodyForm = newData;
+      newData = [...this.props.screenProps.bodyForm];
     } else {
-      const newData = [...this.props.screenProps.bodyUrlEncoded];
-      newData.splice(rowId, 1);
-      this.props.screenProps.bodyUrlEncoded = newData;
+      newData = [...this.props.screenProps.bodyUrlEncoded];
     }
+    newData.splice(rowId, 1);
+    this.props.screenProps.updateList(tab, newData);
     this.forceUpdate();
   }
 
   addRow(tab) {
-    console.log(tab);
     // Add a row to request parameters or headers, depending on which is currently being shown
+    let newData = [];
     if (tab === 'Parameters') {
-      const newData = [...this.props.screenProps.requestParameters];
-      newData.push(['', '']);
-      this.props.screenProps.requestParameters = newData;
+      newData = [...this.props.screenProps.requestParameters];
     } else if (tab === 'Headers') {
-      const newData = [...this.props.screenProps.requestHeaders];
-      newData.push(['', '']);
-      this.props.screenProps.requestHeaders = newData;
+      newData = [...this.props.screenProps.requestHeaders];
     } else if (tab === 'form-data') {
-      const newData = [...this.props.screenProps.bodyForm];
-      newData.push(['', '']);
-      this.props.screenProps.bodyForm = newData;
+      newData = [...this.props.screenProps.bodyForm];
     } else {
-      const newData = [...this.props.screenProps.bodyUrlEncoded];
-      newData.push(['', '']);
-      this.props.screenProps.bodyUrlEncoded = newData;
+      newData = [...this.props.screenProps.bodyUrlEncoded];
     }
+    this.props.screenProps.updateList(tab, newData);
+    newData.push(['', '']);
     this.forceUpdate();
   }
 
@@ -140,23 +129,18 @@ export default class RequestOptionsScreen extends React.Component {
   _handleUpdateList(tab, text, secId, rowId, rowMap, index) {
     // Updates list based on user input
     rowMap[`${secId}${rowId}`].props.closeRow();
+    let newData = [];
     if (tab === 'Parameters') {
-      const newData = [...this.props.screenProps.requestParameters];
-      newData[rowId][index] = text;
-      this.props.screenProps.requestParameters = newData;
+      newData = [...this.props.screenProps.requestParameters];
     } else if (tab === 'Headers') {
-      const newData = [...this.props.screenProps.requestHeaders];
-      newData[rowId][index] = text;
-      this.props.screenProps.requestHeaders = newData;
+      newData = [...this.props.screenProps.requestHeaders];
     } else if (tab === 'form-data') {
-      const newData = [...this.props.screenProps.bodyForm];
-      newData[rowId][index] = text;
-      this.props.screenProps.bodyForm = newData;
+      newData = [...this.props.screenProps.bodyForm];
     } else {
-      const newData = [...this.props.screenProps.bodyUrlEncoded];
-      newData[rowId][index] = text;
-      this.props.screenProps.bodyUrlEncoded = newData;
+      newData = [...this.props.screenProps.bodyUrlEncoded];
     }
+    newData[rowId][index] = text;
+    this.props.screenProps.updateList(tab, newData);
     this.forceUpdate();
   }
   _handleBody() {
