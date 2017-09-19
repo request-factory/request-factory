@@ -21,6 +21,7 @@ class AppContainer extends React.Component {
     requestHeadersData: [],
     bodyFormData: [],
     bodyUrlEncodedData: [],
+    bodyRawData: [],
   };
 
   componentWillMount() {
@@ -84,8 +85,10 @@ class AppContainer extends React.Component {
       this.setState({ requestHeadersData: newData });
     } else if (tab === 'form-data') {
       this.setState({ bodyFormData: newData });
-    } else {
+    } else if (tab === 'x-www-form-urlencoded') {
       this.setState({ bodyUrlEncodedData: newData });
+    } else {
+      this.setState({ bodyRawData: newData });
     }
   }
 
@@ -119,7 +122,8 @@ class AppContainer extends React.Component {
               requestParameters: this.state.requestParametersData,
               requestHeaders: this.state.requestHeadersData,
               bodyForm: this.state.bodyFormData,
-              bodyUrlEncoded: this.state.bodyUrlEncodedData }}
+              bodyUrlEncoded: this.state.bodyUrlEncodedData,
+              bodyRaw: this.state.bodyRawData }}
             />
           </View>
         </Root>

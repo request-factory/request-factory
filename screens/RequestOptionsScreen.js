@@ -16,7 +16,6 @@ import {
   Icon,
   Tab,
   Tabs,
-  Fab,
 } from 'native-base';
 
 import { Col, Row, Grid } from 'react-native-easy-grid';
@@ -89,6 +88,7 @@ export default class RequestOptionsScreen extends React.Component {
           { position: 'absolute', flexDirection: 'column', height: '100%', width: '100%' }]}
         >
           <Tabs
+            locked
             initialPage={0}
             tabBarUnderlineStyle={{ backgroundColor: Colors.mainTheme }}
           >
@@ -126,6 +126,7 @@ export default class RequestOptionsScreen extends React.Component {
       </View>
     );
   }
+
   _handleUpdateList(tab, text, secId, rowId, rowMap, index) {
     // Updates list based on user input
     rowMap[`${secId}${rowId}`].props.closeRow();
@@ -143,14 +144,28 @@ export default class RequestOptionsScreen extends React.Component {
     this.props.screenProps.updateList(tab, newData);
     this.forceUpdate();
   }
+
+  _updateRaw(text) {
+    this.props.screenProps.updateList('Raw', text);
+  }
+
   _handleBody() {
     if (this.props.screenProps.requestBodyType === 'form-data') {
       return (this._handleTab('form-data', this.props.screenProps.bodyForm));
     } else if (this.props.screenProps.requestBodyType === 'x-www-form-urlencoded') {
       return (this._handleTab('x-www-form-urlencoded', this.props.screenProps.bodyUrlEncoded));
     }
-    return (<Text>raw</Text>);
+    return (
+      <Input
+        placeholder='Body'
+        type='text'
+        multiline
+        style={{ height: '100%', width: '100%', textAlign: 'left', textAlignVertical: 'top', ...this.props.screenProps.theme.text, ...this.props.screenProps.theme.requestContainer }}
+        onChangeText={(text) => this._updateRaw(text)}
+      />
+    );
   }
+
   _handleTab(tabName, list) {
     return (
       <ScrollView style={{ flex: 0.8, ...this.props.screenProps.theme.requestOptions }}>
@@ -165,7 +180,7 @@ export default class RequestOptionsScreen extends React.Component {
                     <Input
                       placeholder='Key'
                       type='text'
-                      style={{ textAlign: 'center', ...this.props.screenProps.theme.text }}
+                      style={{ ...this.props.screenProps.theme.text }}
                       value={data[0]}
                       onChangeText={(text) => this._handleUpdateList(tabName, text, secId, rowId, rowMap, 0)}
                     />
@@ -174,7 +189,7 @@ export default class RequestOptionsScreen extends React.Component {
                     <Input
                       type='text'
                       placeholder='Value'
-                      style={{ textAlign: 'center', ...this.props.screenProps.theme.text }}
+                      style={{ ...this.props.screenProps.theme.text }}
                       value={data[1]}
                       onChangeText={(text) => this._handleUpdateList(tabName, text, secId, rowId, rowMap, 1)}
                     />

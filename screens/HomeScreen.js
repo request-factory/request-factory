@@ -12,13 +12,9 @@ import {
   Text,
   Keyboard,
   StatusBar,
-  Modal,
-  TouchableHighlight,
-  ListView,
 } from 'react-native';
 
 import {
-  Item,
   Input,
   Content,
   Button,
@@ -28,9 +24,6 @@ import {
   Left,
   Right,
   Container,
-  Card,
-  CardItem,
-  Icon,
 } from 'native-base';
 
 import { MaterialIcons } from '@expo/vector-icons';
@@ -129,17 +122,19 @@ export default class HomeScreen extends React.Component {
   }
 
   updateUrl(input) {
-    const urlIsValid = validator.isURL(input);
-    this.setState({ valid: urlIsValid });
+    this.setState({ url: input });
+  }
 
-    // Only normalize url if input is valid
-    const normalizedUrl = urlIsValid ? normalize(input) : input;
+  normalizeUrl() {
+    const normalizedUrl = normalize(this.state.url);
     this.setState({ url: normalizedUrl });
+
+    const urlIsValid = validator.isURL(this.state.url);
+    this.setState({ valid: urlIsValid });
   }
 
   updatePick = (value) => {
     this.setState({ type: value });
-    console.log(`Update request type: ${this.state.type}`);
   }
 
   _renderResponseBody() {
@@ -181,7 +176,7 @@ export default class HomeScreen extends React.Component {
               placeholder='Enter request URL'
               onChangeText={(text) => this.updateUrl(text)}
               returnKeyType='send'
-              onSubmitEditing={this._handleHelpPress}
+              onSubmitEditing={this._sendRequest}
             />
           </View>
           <Button
@@ -289,12 +284,14 @@ export default class HomeScreen extends React.Component {
     this.setState({ time: `${responseTime} ms` });
   }
 
-  _handleHelpPress = async () => {
+  _sendRequest = async () => {
+    await this.normalizeUrl();
+
     let body = this.convertList(this.props.screenProps.bodyForm);
     if (this.props.screenProps.requestBodyType === 'x-www-form-urlencoded') {
       body = this.convertList(this.props.screenProps.bodyUrlEncoded);
     } else if (this.props.screenProps.requestBodyType === 'raw') {
-      console.log('raw');
+      body = this.props.screenProps.bodyRaw;
     }
     Keyboard.dismiss();
     const requestTime = (new Date()).getTime();
@@ -310,7 +307,6 @@ export default class HomeScreen extends React.Component {
     if (this.state.type !== 'get') {
       requestObj.data = body;
     }
-
     if (this.state.valid) {
       await axios(requestObj).then((response) => {
         const responseStatus = response ? response.status : '';
