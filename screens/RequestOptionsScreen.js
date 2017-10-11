@@ -158,6 +158,7 @@ export default class RequestOptionsScreen extends React.Component {
     return (
       <Input
         placeholder='Body'
+        value={this.props.screenProps.bodyRaw}
         type='text'
         multiline
         style={{ height: '100%', width: '100%', textAlign: 'left', textAlignVertical: 'top', ...this.props.screenProps.theme.text, ...this.props.screenProps.theme.requestContainer }}
