@@ -30,6 +30,9 @@ const themes = {
     urlBox: {
       backgroundColor: 'white',
     },
+    requestOptions: {
+      backgroundColor: 'white',
+    },
   },
   darkTheme: {
     _id: 'dark',
@@ -67,6 +70,9 @@ const themes = {
       backgroundColor: '#222222',
     },
     urlBox: {
+      backgroundColor: '#222222',
+    },
+    requestOptions: {
       backgroundColor: '#222222',
     },
   },

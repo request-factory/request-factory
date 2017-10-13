@@ -16,6 +16,12 @@ class AppContainer extends React.Component {
     appIsReady: false,
     requestHistory: [],
     theme: themes.lightTheme,
+    requestBodyType: 'form-data',
+    requestParametersData: [],
+    requestHeadersData: [],
+    bodyFormData: [],
+    bodyUrlEncodedData: [],
+    bodyRawData: "",
   };
 
   componentWillMount() {
@@ -68,6 +74,24 @@ class AppContainer extends React.Component {
     );
   }
 
+  _changeBodyType = (type) => {
+    this.setState({ requestBodyType: type });
+  }
+
+  _updateList = (tab, newData) => {
+    if (tab === 'Parameters') {
+      this.setState({ requestParametersData: newData });
+    } else if (tab === 'Headers') {
+      this.setState({ requestHeadersData: newData });
+    } else if (tab === 'form-data') {
+      this.setState({ bodyFormData: newData });
+    } else if (tab === 'x-www-form-urlencoded') {
+      this.setState({ bodyUrlEncodedData: newData });
+    } else {
+      this.setState({ bodyRawData: newData });
+    }
+  }
+
   _toggleNightMode = (value) => {
     if (value) {
       this.setState({ theme: themes.darkTheme });
@@ -91,7 +115,15 @@ class AppContainer extends React.Component {
               clearRequestHistory: this._clearRequestHistory,
               toggleNightMode: this._toggleNightMode,
               theme: this.state.theme,
-              isNightModeToggled: this.state.nightModeToggled }}
+              isNightModeToggled: this.state.nightModeToggled,
+              updateList: this._updateList,
+              requestBodyType: this.state.requestBodyType,
+              changeBodyType: this._changeBodyType,
+              requestParameters: this.state.requestParametersData,
+              requestHeaders: this.state.requestHeadersData,
+              bodyForm: this.state.bodyFormData,
+              bodyUrlEncoded: this.state.bodyUrlEncodedData,
+              bodyRaw: this.state.bodyRawData }}
             />
           </View>
         </Root>

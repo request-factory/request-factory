@@ -16,7 +16,6 @@ export class RequestPicker extends React.Component {
 
   render() {
     this.state.colour = requestColours(this.props.type);
-    console.log(this.state.colour);
     return (
       <View style={[styles.requestPicker, { backgroundColor: this.state.colour }]} >
         <Picker

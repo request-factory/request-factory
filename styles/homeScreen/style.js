@@ -23,22 +23,20 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: '#d6d7da',
   },
+  responseCol: {
+    justifyContent: 'center',
+  },
   viewTab: {
-    marginTop: 10,
-    marginBottom: 10,
     textAlign: 'center',
   },
   viewTabSelected: {
-    marginTop: 10,
-    marginBottom: 10,
-    textAlign: 'center',
     color: Colors.mainTheme,
+    borderBottomWidth: 0,
   },
   viewCol: {
     backgroundColor: '#f7f7f7',
   },
   responseStat: {
-    marginTop: 10,
     textAlign: 'left',
   },
   developmentModeText: {

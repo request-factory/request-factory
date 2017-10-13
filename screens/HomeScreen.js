@@ -15,7 +15,6 @@ import {
 } from 'react-native';
 
 import {
-  Item,
   Input,
   Content,
   Button,
@@ -41,6 +40,8 @@ import styles from '../styles/homeScreen/style';
 
 import { RequestPicker } from '../components/RequestPicker';
 
+import Colors from '../constants/Colors';
+
 export default class HomeScreen extends React.Component {
   static navigationOptions({ navigation }) {
     return {
@@ -63,16 +64,15 @@ export default class HomeScreen extends React.Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      type: 'get',
+      url: null,
+      res: '',
+      valid: false,
+      showResponseBody: true,
+      responseHeaders: {},
+    };
   }
-
-  state = {
-    type: 'get',
-    url: null,
-    res: '',
-    valid: false,
-    showResponseBody: true,
-    responseHeaders: {},
-  };
 
   // Update state of request screen when user attempts to copy request from history screen
   componentWillReceiveProps(nextProps) {
@@ -83,18 +83,58 @@ export default class HomeScreen extends React.Component {
     }
   }
 
-  updateUrl(input) {
-    const urlIsValid = validator.isURL(input);
-    this.setState({ valid: urlIsValid });
+  saveParameters() {
+    // Remove items with no key from request parameters
+    // TODO: Display warning message when user has empty parameters
+    const newData = [...this.props.screenProps.requestParameters];
+    for (let i = 0; i < newData.length; i++) {
+      if (newData[i][0] === '') {
+        newData.splice(i, 1);
+        i--;
+      }
+    }
+    this.props.screenProps.requestParameters = newData;
+  }
 
-    // Only normalize url if input is valid
-    const normalizedUrl = urlIsValid ? normalize(input) : input;
+  saveHeaders() {
+    // Remove items with no key from request headers
+    // TODO: Display warning message when user has empty headers
+    const newData = [...this.props.screenProps.requestHeaders];
+    for (let i = 0; i < newData.length; i++) {
+      if (newData[i][0] === '') {
+        newData.splice(i, 1);
+        i--;
+      }
+    }
+    this.props.screenProps.requestHeaders = newData;
+  }
+
+  convertList(list) {
+    // Converts a list of parameters or readers in native base list format [['key', 'value'], ['key', 'value']]
+    // to be used in a request {'key: 'value', 'key', 'value'}
+    this.newList = {};
+    for (let i = 0; i < list.length; i++) {
+      if (!(list[i][0] in this.newList)) {
+        this.newList[list[i][0]] = list[i][1];
+      }
+    }
+    return this.newList;
+  }
+
+  updateUrl(input) {
+    this.setState({ url: input });
+  }
+
+  normalizeUrl() {
+    const normalizedUrl = normalize(this.state.url);
     this.setState({ url: normalizedUrl });
+
+    const urlIsValid = validator.isURL(this.state.url);
+    this.setState({ valid: urlIsValid });
   }
 
   updatePick = (value) => {
     this.setState({ type: value });
-    console.log(`Update request type: ${this.state.type}`);
   }
 
   _renderResponseBody() {
@@ -115,7 +155,12 @@ export default class HomeScreen extends React.Component {
     return null;
   }
 
+  _openParametersScreen(navigate) {
+    navigate('RequestOptions');
+  }
+
   render() {
+    const { navigate } = this.props.navigation;
     return (
       <View style={{ flex: 1, paddingTop: StatusBar.currentHeight, ...this.props.screenProps.theme.requestContainer }}>
         <View style={[styles.container, this.props.screenProps.theme.requestContainer]}>
@@ -131,12 +176,13 @@ export default class HomeScreen extends React.Component {
               placeholder='Enter request URL'
               onChangeText={(text) => this.updateUrl(text)}
               returnKeyType='send'
-              onSubmitEditing={this._handleHelpPress}
+              onSubmitEditing={this._sendRequest}
             />
           </View>
           <Button
             transparent
             style={StyleSheet.flatten([styles.requestHeader, this.props.screenProps.theme.urlBox])}
+            onPress={() => this._openParametersScreen(navigate)}
           >
             <MaterialIcons
               name="menu"
@@ -157,19 +203,23 @@ export default class HomeScreen extends React.Component {
         </View>
         <Grid style={styles.responseGrid}>
           <Row style={[styles.responseTab, this.props.screenProps.theme.requestTab]}>
-            <Col size={15} style={this.props.screenProps.theme.requestContainer}>
+            <Col size={15} style={[this.props.screenProps.theme.requestContainer, styles.responseCol]}>
               <TouchableOpacity onPress={() => this._handleSwitchResponseView('body')}>
                 <Text style={this._handleSelectedStyle('body')}>Body</Text>
               </TouchableOpacity>
             </Col>
-            <Col size={20} style={this.props.screenProps.theme.requestContainer}>
+            <Col size={20} style={[this.props.screenProps.theme.requestContainer, styles.responseCol]}>
               <TouchableOpacity onPress={() => this._handleSwitchResponseView('headers')}>
                 <Text style={this._handleSelectedStyle('headers')}>Headers</Text>
               </TouchableOpacity>
             </Col>
             <Col style={this.props.screenProps.theme.requestContainer} size={10} />
-            <Col style={this.props.screenProps.theme.requestContainer} size={25}><Text style={[styles.responseStat, this.props.screenProps.theme.responseStat]}>Status: {this.state.status}</Text></Col>
-            <Col style={this.props.screenProps.theme.requestContainer} size={30}><Text style={[styles.responseStat, this.props.screenProps.theme.responseStat]}>Time: {this.state.time}</Text></Col>
+            <Col style={[this.props.screenProps.theme.requestContainer, styles.responseCol]} size={25}>
+              <Text style={[styles.responseStat, this.props.screenProps.theme.responseStat]}>Status: {this.state.status}</Text>
+            </Col>
+            <Col style={[this.props.screenProps.theme.requestContainer, styles.responseCol]} size={30}>
+              <Text style={[styles.responseStat, this.props.screenProps.theme.responseStat]}>Time: {this.state.time}</Text>
+            </Col>
           </Row>
           <Row style={{ flex: 1.0 }}>
             <ScrollView style={this.props.screenProps.theme.responseContainer}>
@@ -205,15 +255,17 @@ export default class HomeScreen extends React.Component {
   }
 
   _handleSelectedStyle = (name) => {
+    // Changes the colour of the currently selected tab in the request screen
     if (this.state.showResponseBody && name === 'body') {
-      return styles.viewTabSelected;
+      return [styles.viewTab, styles.viewTabSelected];
     } else if (!this.state.showResponseBody && name === 'headers') {
-      return styles.viewTabSelected;
+      return [styles.viewTab, styles.viewTabSelected];
     }
     return [styles.viewTab, this.props.screenProps.theme.text];
   }
 
   _handleSwitchResponseView = (name) => {
+    // Switches view when tab is changed in main/response modal
     if (name === 'body') {
       this.setState({ showResponseBody: true });
     } else {
@@ -232,13 +284,29 @@ export default class HomeScreen extends React.Component {
     this.setState({ time: `${responseTime} ms` });
   }
 
-  _handleHelpPress = async () => {
+  _sendRequest = async () => {
+    await this.normalizeUrl();
+
+    let body = this.convertList(this.props.screenProps.bodyForm);
+    if (this.props.screenProps.requestBodyType === 'x-www-form-urlencoded') {
+      body = this.convertList(this.props.screenProps.bodyUrlEncoded);
+    } else if (this.props.screenProps.requestBodyType === 'raw') {
+      body = this.props.screenProps.bodyRaw;
+    }
     Keyboard.dismiss();
     const requestTime = (new Date()).getTime();
+    this.saveParameters();
+    this.saveHeaders();
     const requestObj = {
       method: this.state.type,
       url: this.state.url,
+      headers: this.convertList(this.props.screenProps.requestHeaders),
+      params: this.convertList(this.props.screenProps.requestParameters),
     };
+    // GET requests do not have a body
+    if (this.state.type !== 'get') {
+      requestObj.data = body;
+    }
     if (this.state.valid) {
       await axios(requestObj).then((response) => {
         const responseStatus = response ? response.status : '';
@@ -268,5 +336,6 @@ export default class HomeScreen extends React.Component {
         duration: 3000,
       });
     }
+
   };
 }
