@@ -21,7 +21,7 @@ class AppContainer extends React.Component {
     requestHeadersData: [],
     bodyFormData: [],
     bodyUrlEncodedData: [],
-    bodyRawData: [],
+    bodyRawData: "",
   };
 
   componentWillMount() {
