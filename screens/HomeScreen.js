@@ -303,6 +303,15 @@ export default class HomeScreen extends React.Component {
       headers: this.convertList(this.props.screenProps.requestHeaders),
       params: this.convertList(this.props.screenProps.requestParameters),
     };
+    const historyObj = {
+      method: this.state.type,
+      url: this.state.url,
+      headers: this.props.screenProps.requestHeaders,
+      parameters: this.props.screenProps.requestParameters,
+      bodyForm: this.props.screenProps.bodyForm,
+      bodyUrlEncoded: this.props.screenProps.bodyUrlEncoded,
+      bodyRaw: this.props.screenProps.bodyRaw,
+    };
     // GET requests do not have a body
     if (this.state.type !== 'get') {
       requestObj.data = body;
@@ -314,7 +323,7 @@ export default class HomeScreen extends React.Component {
         this.setState({ res: JSON.stringify(response.data, null, '\t') });
         this.setState({ status: responseStatus });
         this.setState({ responseHeaders: response.headers });
-        this.props.screenProps.updateHistory({ ...requestObj, _id: requestTime });
+        this.props.screenProps.updateHistory({ ...historyObj, _id: requestTime });
       }).catch((error) => {
         this._handleResponseTime(requestTime);
         const responseStatus = error.response ? error.response.status : '';

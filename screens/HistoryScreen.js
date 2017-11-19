@@ -56,6 +56,7 @@ export default class HistoryScreen extends React.Component {
   }
 
   _copyRequest(navigate, request) {
+    this.props.screenProps.loadRequestOptions(request);
     navigate('Home', {
       requestUrl: request.url,
       requestType: request.method.toLowerCase(),

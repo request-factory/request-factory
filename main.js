@@ -74,6 +74,14 @@ class AppContainer extends React.Component {
     );
   }
 
+  _loadRequestOptions = (request) => {
+    this.setState({ requestParametersData: request.parameters,
+      requestHeadersData: request.headers,
+      bodyFormData: request.bodyForm,
+      bodyUrlEncodedData: request.bodyUrlEncoded,
+      bodyRawData: request.bodyRaw });
+  }
+
   _changeBodyType = (type) => {
     this.setState({ requestBodyType: type });
   }
@@ -117,6 +125,7 @@ class AppContainer extends React.Component {
               theme: this.state.theme,
               isNightModeToggled: this.state.nightModeToggled,
               updateList: this._updateList,
+              loadRequestOptions: this._loadRequestOptions,
               requestBodyType: this.state.requestBodyType,
               changeBodyType: this._changeBodyType,
               requestParameters: this.state.requestParametersData,
