@@ -36,6 +36,11 @@ export default class HistoryScreen extends React.Component {
     };
   }
 
+  // Update first time the component is loaded
+  componentDidMount() {
+    this._updateListViewDataSource(this.props.screenProps.history);
+  }
+
   // Update state of history screen when user makes a new request or theme changes
   componentWillReceiveProps = (nextProps) => {
     if (nextProps.screenProps.theme._id !== this.props.screenProps.theme._id) {
