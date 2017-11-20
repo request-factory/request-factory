@@ -30,6 +30,10 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 import { Col, Row, Grid } from 'react-native-easy-grid';
 
+import SyntaxHighlighter from 'react-native-syntax-highlighter';
+
+import { xcode } from 'react-syntax-highlighter/dist/styles';
+
 import validator from 'validator';
 
 import normalize from 'normalize-url';
@@ -138,7 +142,18 @@ export default class HomeScreen extends React.Component {
   }
 
   _renderResponseBody() {
-    return this.state.showResponseBody ? <Text style={this.props.screenProps.theme.text}>{this.state.res}</Text> : null;
+    if (this.state.responseHeaders['content-type'] != null) {
+      if (this.state.responseHeaders['content-type'].includes('text/html')) {
+        return this.state.showResponseBody ?
+          //<SyntaxHighlighter wrapLines language='xml' style={xcode}>{this.state.res}</SyntaxHighlighter> : null;
+          <Text>{this.state.res}</Text> : null;
+      } else if (this.state.responseHeaders['content-type'].includes('application/javascript') ||
+                   this.state.responseHeaders['content-type'].includes('application/json')) {
+        return this.state.showResponseBody ?
+          <SyntaxHighlighter wrapLines='true' language='json' style={xcode}>{this.state.res}</SyntaxHighlighter> : null;
+      }
+    }
+    return this.state.showResponseBody ? <Text>{this.state.res}</Text> : null;
   }
 
   _renderResponseHeaders() {
